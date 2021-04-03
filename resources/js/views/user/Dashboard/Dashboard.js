@@ -9,8 +9,8 @@ import routes from "./../../../routes";
 import { Container } from 'reactstrap';
 
 class Home extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
             isLoggedIn: false,
             user: {},
