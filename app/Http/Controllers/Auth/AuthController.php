@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Str;
 
 class AuthController extends Controller
 {
@@ -32,16 +33,29 @@ class AuthController extends Controller
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'remember_token' => Str::random(10)
         ]);
 
         $user->save();
+        $token = $user->createToken('Personal Access Token');
+        $token->token->expires_at = Carbon::now()->addWeeks(1);
+        $affected = DB::table('users')
+            ->where('id', $user->id)
+            ->update(['api_token' => substr($token->accessToken, 0, 80), 'expires_at' => $token->expires_at]);
+        $token->save();
 
         return response()->json([
             'success' => true,
             'id' => $user->id,
             'name' => $user->name,
-            'email' => $user->email
+            'email' => $user->email,
+            'access_token' => $token->accessToken,
+            'api_token' => substr($token->accessToken, 0, 80),
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse(
+                $token->token->expires_at
+            )->toDateTimeString()
         ], 201);
     }
 
@@ -61,7 +75,6 @@ class AuthController extends Controller
         ]);
 
         $credentials = request(['email', 'password']);
-        // echo "<script>Console.log(".implode("-",$credentials).")</script>";
 
         if (!Auth::attempt($credentials))
             return response()->json([

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import { Link, withRouter } from 'react-router-dom'
+import React, {Component} from 'react'
+import {Link, withRouter} from 'react-router-dom'
 import ReactDOM from 'react-dom'
 import FlashMessage from 'react-flash-message'
 import axios from 'axios'
-import { Row, Col, Form, FormGroup, Input, Button } from 'reactstrap'
+import {Button, Col, Form, FormGroup, Input, Row} from 'reactstrap'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 
@@ -43,8 +43,8 @@ class RegisterContainer extends Component {
     }
 
     componentDidMount() {
-        const { prevLocation } = this.state.redirect.state ||
-            { prevLocation: { pathname: '/dashboard' } }
+        const {prevLocation} = this.state.redirect.state ||
+        {prevLocation: {pathname: '/dashboard'}}
         if (prevLocation && this.state.isLoggedIn) {
             return this.props.history.push(prevLocation)
         }
@@ -56,7 +56,7 @@ class RegisterContainer extends Component {
             formSubmitting: true
         })
         ReactDOM.findDOMNode(this).scrollIntoView()
-        if (this.state.user.password == this.state.user.password_conf) {
+        if (this.state.user.password === this.state.user.password_conf) {
             let userData = {
                 name: this.state.user.name,
                 email: this.state.user.email,
@@ -70,17 +70,23 @@ class RegisterContainer extends Component {
                 .then(json => {
                     if (json.data.success) {
                         let userData = {
-                            name: json.data.id,
-                            email: json.data.name
+                            id: json.data.id,
+                            name: json.data.name,
+                            email: json.data.email,
+                            access_token: json.data.access_token,
+                            api_token: json.data.api_token
                         }
                         let appState = {
                             isRegistered: true,
+                            isLoggedIn: true,
                             user: userData
                         }
                         localStorage['appState'] = JSON.stringify(appState)
                         this.setState({
                             isRegistered: appState.isRegistered,
-                            user: appState.user
+                            isLoggedIn: appState.isLoggedIn,
+                            user: appState.user,
+                            error: ''
                         })
                         location.reload()
                     } else {
@@ -98,7 +104,7 @@ class RegisterContainer extends Component {
                         })
                     } else if (error.request) {
                         /// The request was made but no response was received
-                        /// `error.request` is an instance of XMLHttpRequest 
+                        /// `error.request` is an instance of XMLHttpRequest
                         let err = error.request
                         this.setState({
                             error: err,
@@ -114,7 +120,7 @@ class RegisterContainer extends Component {
                     }
                 })
                 .finally(
-                    this.setState({
+                    () => this.setState({
                         error: ''
                     })
                 )
@@ -150,7 +156,7 @@ class RegisterContainer extends Component {
 
         return (
             <>
-                <Header userData={this.state.user} userIsLoggedIn={false} />
+                <Header userData={this.state.user} userIsLoggedIn={false}/>
                 <div className='header bg-gradient-primary py-7 py-lg-8'>
                     <div className='container'>
                         <Row>
@@ -159,7 +165,8 @@ class RegisterContainer extends Component {
                                 {
                                     this.state.isRegistered
                                         ? <FlashMessage duration={60000} persistOnHover={true}>
-                                            <h5 className={"alert alert-success text-center"}>Registration successful, redirecting...</h5>
+                                            <h5 className={"alert alert-success text-center"}>Registration successful,
+                                                redirecting...</h5>
                                         </FlashMessage>
                                         : ''
                                 }
@@ -170,7 +177,7 @@ class RegisterContainer extends Component {
                                             <ul>
                                                 {
                                                     arr.map((item, i) => (
-                                                        <li key={i}><h5 style={{ color: 'red' }}>{item}</h5></li>
+                                                        <li key={i}><h5 style={{color: 'red'}}>{item}</h5></li>
                                                     ))
                                                 }
                                             </ul>
@@ -186,7 +193,7 @@ class RegisterContainer extends Component {
                                             name='name'
                                             placeholder="name"
                                             required
-                                            onChange={this.handleFieldChange} />
+                                            onChange={this.handleFieldChange}/>
                                     </FormGroup>
                                     <FormGroup>
                                         <Input
@@ -223,15 +230,16 @@ class RegisterContainer extends Component {
                                         />
                                     </FormGroup>
                                     <Button type='submit'
-                                        name="singlebutton"
-                                        className='btn btn-default btn-lg btn-block mb-10'
-                                        disabled={this.state.formSubmitting ? true : false}
+                                            name="singlebutton"
+                                            className='btn btn-default btn-lg btn-block mb-10'
+                                            disabled={this.state.formSubmitting ? true : false}
                                     >Create Account</Button>
                                 </Form>
                             </Col>
                             <div className="container pt-2">
                                 <div className="row">
-                                    <div className="offset-xl-3 col-xl-6 offset-lg-1 col-lg-10 col-md-6 col-sm-12 col-12">
+                                    <div
+                                        className="offset-xl-3 col-xl-6 offset-lg-1 col-lg-10 col-md-6 col-sm-12 col-12">
                                         <span className='pull-left'>
                                             Already have an account? &nbsp;
                                             <Link to='/login' className='text-yellow'>Login</Link>
@@ -245,7 +253,7 @@ class RegisterContainer extends Component {
                         </Row>
                     </div>
                 </div>
-                <Footer />
+                <Footer/>
             </>
         )
     }

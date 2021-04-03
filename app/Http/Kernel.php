@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ApiLogin;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\Cors;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -45,6 +46,7 @@ class Kernel extends HttpKernel
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
         ForceJsonResponse::class,
+        Cors::class
     ];
 
     /**
@@ -87,6 +89,7 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
         'json.response' => ForceJsonResponse::class,
-        'api-login' => ApiLogin::class
+        'api-login' => ApiLogin::class,
+        'cors' => Cors::class
     ];
 }
