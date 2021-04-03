@@ -29,12 +29,9 @@ class SupplierController extends Controller
         foreach ($suppliers as $supplier) {
             $did = District::find($supplier->district_id)->name;
             $rid = Region::find($supplier->region_id)->name;
-            $cid = Constituency::find($supplier->county_id)->name;
-            $pid = Parishes::find($supplier->parish_id)->name;
             $supplier->district = $did;
             $supplier->region = $rid;
-            $supplier->county = $cid;
-            $supplier->parish = $pid;
+            $supplier->phone = SupplierContact::find($supplier->supplier_contacts_id)->phone_number;
             $s[$i++] = $supplier;
         }
         $res = ['suppliers' => $s];
@@ -51,7 +48,9 @@ class SupplierController extends Controller
     {
         $supplierData = $request->supplier_data;
         $contactData = $request->contact_data;
+        $contactData['name'] = $supplierData['name'].' Contact';
         $contractData = $request->contract_data;
+        $contractData['name'] = $supplierData['name'].' Contract';
         $cId = SupplierContact::create($contactData)->id;
         $crId = SupplierContract::create($contractData)->id;
         $supplierData['supplier_contacts_id'] = $cId;

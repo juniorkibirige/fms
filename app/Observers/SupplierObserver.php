@@ -5,6 +5,8 @@ namespace App\Observers;
 use App\Models\Input;
 use App\Models\Office;
 use App\Models\Supplier;
+use App\Models\SupplierContact;
+use App\Models\SupplierContract;
 use Str;
 
 class SupplierObserver
@@ -25,10 +27,6 @@ class SupplierObserver
         $supplier->inputs = $ins;
     }
 
-    public function saved(Supplier $supplier) {
-//        $this->inputPivotUpdateOrCreate($supplier);
-    }
-
     /**
      * Handle the supplier "created" event.
      *
@@ -37,39 +35,16 @@ class SupplierObserver
      */
     public function created(Supplier $supplier)
     {
-//        $this->inputPivotUpdateOrCreate($supplier);
+        $this->updateData($supplier);
     }
 
-    public function inputPivotUpdateOrCreate(Supplier $supplier)
+    public function updateData(Supplier $supplier)
     {
-        if(!request()->has('inputs')){
-            return;
-        }
-        $inputs = json_decode(request('inputs'));
-        $inputs = collect($inputs);
-        if($supplier->inputsRel()->exists()) {
-            $supplier->inputsRel()->delete();
-        }
-        $i = [];
-//        foreach ( as $key => $value) {
-//            foreach ($value as $k => $v) {
-//                if ($k == "inputs") {
-////                    $input['input_id'] = [];
-//                } else {
-//                    if ($k != 'office_id[]')
-//                        $input[$value['inputs']][$k] = $v;
-//                    else
-//                        $input[$value['inputs']]['office_id'] = json_encode($v);
-//                }
-//            }
-//            $input[$value['inputs']]['created_at'] = Carbon::now();
-//            $input[$value['inputs']]['updated_at'] = Carbon::now();
-//            $item->inputsRel()->sync($input, false);
-//        }
-        print_r($inputs);
-        $inputs->each(function($input) use ($supplier) {
-
-        });
+        $cID = $supplier->supplier_contacts_id;
+        $crID = $supplier->supplier_contracts_id;
+        $contact = SupplierContact::find($cID);
+        $contract = SupplierContract::find($crID);
+        $name = $supplier->name;
     }
 
     /**
