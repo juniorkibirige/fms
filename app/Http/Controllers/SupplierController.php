@@ -31,7 +31,13 @@ class SupplierController extends Controller
             $rid = Region::find($supplier->region_id)->name;
             $supplier->district = $did;
             $supplier->region = $rid;
-            $supplier->phone = SupplierContact::find($supplier->supplier_contacts_id)->phone_number;
+            $phone = SupplierContact::find($supplier->supplier_contacts_id);
+            if($phone !== null){
+                $supplier->p = $phone;
+                $supplier->phone = $phone->phone_number;
+            } else {
+                $supplier->phone = 'N/A';
+            }
             $s[$i++] = $supplier;
         }
         $res = ['suppliers' => $s];
