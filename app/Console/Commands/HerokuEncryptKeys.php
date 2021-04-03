@@ -41,11 +41,11 @@ class HerokuEncryptKeys extends Command
      */
     public function handle()
     {
-        if (!env('OENCRYPT_KEY', "c6d60983011a98ee6ed57cdf426810927693192674de280830b6882547045af6c580dbbe2a1a50ee33a32f0a18ba9aca9d527c73345498adcd372ea23e0d3451")) {
+        if (!config('heroku.oencrypt_key')) {
             $this->error('No OENCRYPT_KEY env found!');
             return false;
         }
-        if (strlen(env('OENCRYPT_KEY',"c6d60983011a98ee6ed57cdf426810927693192674de280830b6882547045af6c580dbbe2a1a50ee33a32f0a18ba9aca9d527c73345498adcd372ea23e0d3451")) < 64) {
+        if (strlen(config('heroku.oencrypt_key')) < 64) {
             $this->error('OENCRYPT_KEY too short');
             return false;
         }
@@ -71,7 +71,7 @@ class HerokuEncryptKeys extends Command
     private function oEncrypt($data)
     {
         if (in_array(self::CIPHER, openssl_get_cipher_methods())) {
-            return openssl_encrypt($data, self::CIPHER, env('OENCRYPT_KEY',"c6d60983011a98ee6ed57cdf426810927693192674de280830b6882547045af6c580dbbe2a1a50ee33a32f0a18ba9aca9d527c73345498adcd372ea23e0d3451"), $options = 0, self::IV);
+            return openssl_encrypt($data, self::CIPHER, config('heroku.oencrypt_key'), $options = 0, self::IV);
         } else {
             $this->error('Could not find cipher '. self::CIPHER);
             return false;
