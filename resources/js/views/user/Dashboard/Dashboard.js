@@ -126,7 +126,7 @@ class Home extends Component {
                         imgAlt: "..."
                     }}
                 />
-                <div className='main-content bg-gray-200 h-full' ref="mainContent">
+                <div className='main-content bg-gray-200 h-full pt-6' ref="mainContent">
                     <AdminNavbar
                         {...this.props}
                         logOut={this.logout}

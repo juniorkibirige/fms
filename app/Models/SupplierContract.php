@@ -9,6 +9,7 @@ class SupplierContract extends Model
 
     protected $table = "supplier_contracts";
     protected $fillable = [
+        'name',
         'contract_start',
         'contract_end',
         'details',
