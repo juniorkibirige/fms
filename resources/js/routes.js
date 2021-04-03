@@ -3,6 +3,8 @@ import Report from "./components/Report";
 import SupplierList from "./components/Cruds/Supplier/List";
 import SupplierCreate from "./components/Cruds/Supplier/Create";
 import Tables from "./views/examples/Tables";
+import BeneficiaryList from "./components/Cruds/Beneficiaries/List";
+import BeneficiaryCreate from "./components/Cruds/Beneficiaries/Create";
 
 const routes = [
     {
@@ -51,7 +53,7 @@ const routes = [
                 icon: "fa fa-users text-white",
                 classes: "pl-4",
                 miniName: "AB",
-                component: Tables,
+                component: BeneficiaryList,
                 layout: "/dashboard"
             },
             {
@@ -60,7 +62,7 @@ const routes = [
                 icon: "fa fa-user-plus text-white",
                 classes: "pl-4",
                 miniName: "+B",
-                component: Tables,
+                component: BeneficiaryCreate,
                 layout: "/dashboard"
             },
         ],
