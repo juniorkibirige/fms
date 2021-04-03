@@ -13,7 +13,8 @@
         "laravel/framework": "^8.12",
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^3.2"
+        "laravel/ui": "^3.2",
+      "ext-openssl": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -45,6 +46,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "post-install-cmd": [
+            "php artisan heroku:installkeys"
         ]
     },
     "extra": {
