@@ -1,3 +1,5 @@
 *
 !public/
 !.gitignore
+!oauth-private.key.encrypted
+!oauth-public.key.encrypted
