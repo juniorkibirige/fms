@@ -24,6 +24,7 @@ class Datepicker extends Component {
                                 timeFormat={false}
                                 onChange={this.props.onChange}
                                 inputProps={this.props.inputProps}
+                                initialViewDate={this.props.initial}
                             />
                         </InputGroup>
                     </FormGroup>

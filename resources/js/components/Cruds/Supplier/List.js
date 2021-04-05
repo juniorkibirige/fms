@@ -23,17 +23,32 @@ class SupplierList extends Component {
         super(props)
         this.state = {
             suppliers: [],
-            alert: null
+            alert: null,
+            refreshing: false
         }
         this.handleFieldChange = this.handleFieldChange.bind(this)
         document.title += " : Suppliers"
         this.actionButtons = this.actionButtons.bind(this)
-        // this.handleActionButtons = this.handleActionButtons.bind(this)
+        this.refreshData = this.refreshData.bind(this)
     }
 
     handleActionButtons(row) {
-        console.log(row)
-        console.log(event.target)
+        const id = row.id;
+        const action = event.target.textContent.toLowerCase()
+        switch (action) {
+            case 'edit':
+                console.log('Edit => ' + id)
+                break
+            case 'view':
+                console.log('View => ' + id)
+                break
+            case 'delete':
+                console.log('Delete => ' + id)
+                break
+            default:
+                alert('Unknown action')
+                break
+        }
     }
 
     actionButtons(cell, row) {
@@ -90,6 +105,20 @@ class SupplierList extends Component {
         });
     }
 
+    refreshData() {
+        this.setState({
+            refreshing: true
+        })
+        axios.get('/api/supplier').then(response => {
+            setTimeout(()=>{
+                this.setState({
+                    suppliers: response.data.suppliers,
+                    refreshing: false
+                });
+            }, 2000)
+        });
+    }
+
 
     render() {
         return (
@@ -98,6 +127,8 @@ class SupplierList extends Component {
                 <div className='header' style={{minHeight: `100%`}}>
                     <div className='container-fluid pt-4 pb-2'>
                         <span className="text-2xl text-capitalize">Suppliers</span>
+                        <small onClick={this.refreshData} style={{cursor: 'pointer'}}><i
+                            className={this.state.refreshing ? "ml-2 fa fa-sync text-blue fa-spin" : "ml-2 fa fa-sync text-blue"}/> Reload</small>
                     </div>
                 </div>
                 <div className="col-md-12 bg-blue-gray-400">
@@ -155,7 +186,7 @@ class SupplierList extends Component {
                                     },
                                 ]}
                                 hover
-                                // search
+                                search
                             >
                                 {
                                     props => (

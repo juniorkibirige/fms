@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // import ToolkitProvider from 'react-bootstrap-table2-toolkit'
 import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min';
-import filterFactory, {textFilter} from 'react-bootstrap-table2-filter'
+import filterFactory from 'react-bootstrap-table2-filter'
 
 import {Col, Row} from 'reactstrap'
 import BootstrapTable from 'react-bootstrap-table-next'
@@ -23,17 +23,43 @@ class BeneficiaryList extends Component {
         super(props)
         this.state = {
             beneficiaries: [],
-            alert: null
+            alert: null,
+            refreshing: false,
         }
         this.handleFieldChange = this.handleFieldChange.bind(this)
         document.title += " : Beneficiaries"
         this.actionButtons = this.actionButtons.bind(this)
+        this.refreshData = this.refreshData.bind(this)
+        this.profPic = this.profPic.bind(this)
         // this.handleActionButtons = this.handleActionButtons.bind(this)
     }
 
     handleActionButtons(row) {
-        console.log(row)
-        console.log(event.target)
+        const id = row.id;
+        const action = event.target.textContent.toLowerCase()
+        switch (action) {
+            case 'edit':
+                console.log('Edit => ' + id)
+                break
+            case 'view':
+                console.log('View => ' + id)
+                break
+            case 'delete':
+                console.log('Delete => ' + id)
+                break
+            default:
+                alert('Unknown action')
+                break
+        }
+    }
+
+    profPic(cell, row) {
+        return (
+            <>
+                <img className={'text-center'} src={"/storage/" + (row.profile_pic)} alt="DP" height={50} width={50}
+                     style={{borderRadius: 50 + 'px'}}/>
+            </>
+        )
     }
 
     actionButtons(cell, row) {
@@ -90,6 +116,19 @@ class BeneficiaryList extends Component {
         });
     }
 
+    refreshData() {
+        this.setState({
+            refreshing: true
+        })
+        axios.get('/api/beneficiary').then(response => {
+            setTimeout(() => {
+                this.setState({
+                    beneficiaries: response.data.beneficiaries,
+                    refreshing: false
+                });
+            }, 2000)
+        });
+    }
 
     render() {
         return (
@@ -98,6 +137,8 @@ class BeneficiaryList extends Component {
                 <div className='header' style={{minHeight: `100%`}}>
                     <div className='container-fluid pt-4 pb-2'>
                         <span className="text-2xl text-capitalize">Beneficiaries</span>
+                        <small onClick={this.refreshData} style={{cursor: 'pointer'}}><i
+                            className={this.state.refreshing ? "ml-2 fa fa-sync text-blue fa-spin" : "ml-2 fa fa-sync text-blue"}/> Reload</small>
                     </div>
                 </div>
                 <div className="col-md-12 bg-blue-gray-400">
@@ -119,7 +160,6 @@ class BeneficiaryList extends Component {
                                         hidden: false,
                                         classes: 'col-md-2 col-sm-3',
                                         sort: true,
-                                        filter: textFilter(),
                                     },
                                     {
                                         dataField: 'phone_number',
@@ -134,28 +174,27 @@ class BeneficiaryList extends Component {
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
-                                        filter: textFilter(),
                                     },
                                     {
-                                        dataField: 'county',
-                                        text: 'County',
+                                        dataField: 'profile_pic',
+                                        text: 'Image',
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
-                                        filter: textFilter(),
+                                        formatter: this.profPic
                                     },
                                     {
                                         dataField: 'actions',
                                         isDummyField: true,
                                         classes: 'col-md-2 col-sm-2',
                                         headerClasses: 'col-md-2 col-sm-2',
-                                        text: '',
+                                        text: 'Actions',
                                         hidden: false,
                                         formatter: this.actionButtons
                                     },
                                 ]}
                                 hover
-                                // search
+                                search
                             >
                                 {
                                     props => (
@@ -179,7 +218,7 @@ class BeneficiaryList extends Component {
                                                 classes={`table-white`}
                                                 bootstrap4={true}
                                                 bordered={true}
-                                                filter={ filterFactory() }
+                                                filter={filterFactory()}
                                                 filterPosition={'top'}
                                                 pagination={paginationFactory({
                                                     showTotal: true,
@@ -195,8 +234,8 @@ class BeneficiaryList extends Component {
                                                         text: '100', value: 100,
                                                     }]
                                                 })}
-                                                noDataIndication={"No Suppliers"}
-                                                id="react-supplier-table"
+                                                noDataIndication={"No Beneficiaries"}
+                                                id="react-beneficiary-table"
                                             />
                                         </>
                                     )

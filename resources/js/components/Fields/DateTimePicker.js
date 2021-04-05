@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import Datepicker from "../DateTimePickerComp";
-import Select from "react-select";
 
 const script = document.createElement('script');
 
@@ -20,6 +19,12 @@ class DateTimePicker extends Component {
     }
 
     render() {
+        let inV = null
+        if(this.props.initVal !== null) {
+            inV = new Date(2000, 0, 1)
+        } else {
+            inV = new Date()
+        }
         return (
             <>
                 <div className={this.props.class}>
@@ -30,6 +35,7 @@ class DateTimePicker extends Component {
                             placeholder: "Pick Date here",
                             name: this.props.field,
                         }}
+                        initial={inV}
                         onChange={this.props.onchange}
                     />
                     {

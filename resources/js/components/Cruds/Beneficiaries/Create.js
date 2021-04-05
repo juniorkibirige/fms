@@ -1,25 +1,24 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 import TextInput from "../../Fields/TextInput";
-import DropDownInput from "../../Fields/DropDownInput";
 import DateTimePicker from "../../Fields/DateTimePicker";
-import TextAreaInput from "../../Fields/TextAreaInput";
-import QuantityInput from "../../Fields/QuantityInput";
-import RateInput from "../../Fields/RateInput";
-import TotalInput from "../../Fields/TotalInput";
+import DropDownInput from "../../Fields/DropDownInput";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faImage} from '@fortawesome/free-solid-svg-icons'
+import {Col, CustomInput, Row} from "reactstrap";
+import {Redirect} from "react-router-dom";
 
 const realFields = [
-    'name', 'cR', 'cD', 'cC',
-    'cP', 'email', 'phone', 'address',
-    'contract_start', 'contract_end', 'details', 'office',
-    'status', 'inputs'
+    'fName', 'mName', 'lName', 'cR', 'cD', 'cC',
+    'cP', 'nin', 'gender', 'is_pwd',
+    'type_of_disability', 'phone_number', 'dob',
+    'office_id'
 ]
 
 class BeneficiaryCreate extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            suppliers: [],
             loadingDs: false,
             loadingRs: true,
             loadingCs: false,
@@ -29,24 +28,8 @@ class BeneficiaryCreate extends Component {
             regions: [],
             counties: [],
             parishes: [],
-            statuses: [
-                {
-                    value: 'pending',
-                    label: 'Pending'
-                },
-                {
-                    value: 'running',
-                    label: 'Running'
-                },
-                {
-                    value: 'terminated',
-                    label: 'Terminated'
-                },
-            ],
             submitting: false,
             errors: {},
-            is: [],
-            inputs: [],
             alert: null,
         }
         document.title = document.title.split(':')[0] + " : Supplier Create"
@@ -58,8 +41,8 @@ class BeneficiaryCreate extends Component {
         this.deleteItem = this.deleteItem.bind(this)
         this.handleAddNew = this.handleAddNew.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
-        this.getInputs = this.getInputs.bind(this)
         this.getOffices = this.getOffices.bind(this)
+        this.image = this.image.bind(this)
     }
 
     getDistricts(re) {
@@ -150,32 +133,6 @@ class BeneficiaryCreate extends Component {
         return vs[row][field]
     }
 
-    handleRepeatableFieldChange(elem) {
-        let element = event.target.parentElement.parentElement.parentElement
-        if (element.className.includes('select__indicators css-1hb7zxy-IndicatorsContainer'))
-            element = element.parentElement.parentElement
-        let data = null
-        if (elem !== null) {
-            data = elem.value
-        } else {
-            data = null
-        }
-        let vs = this.state.inputs
-        let ids = element.id.split('_')
-        let name
-        if (ids.length === 2)
-            name = ids[1]
-        else if(ids.length > 2) {
-            ids.splice(0,1)
-            name = ids.join('_')
-        }
-        let row = parseInt(element.id.split('_')[0])
-        vs[row][name] = data
-        this.setState({
-            inputs: vs
-        })
-    }
-
     handleOfficeFieldChange(elem) {
         let elemt = event.target.parentElement.parentElement.parentElement
         if (elemt.className.includes('select__indicators css-1hb7zxy-IndicatorsContainer'))
@@ -241,7 +198,7 @@ class BeneficiaryCreate extends Component {
         let data = event.target.value
         if (event.target.id.includes('react-select')) {
             data = event.target.textContent
-            let isR = false, isD = false, isC = false
+            let isR = false, isD = false, isC = false, isP = false
             for (const regionsKey in this.state.regions) {
                 if (this.state.regions.hasOwnProperty(regionsKey))
                     if (this.state.regions[regionsKey].label === data) {
@@ -275,6 +232,7 @@ class BeneficiaryCreate extends Component {
                     if (this.state.parishes.hasOwnProperty(parishKey))
                         if (this.state.parishes[parishKey].label === data) {
                             data = this.state.parishes[parishKey].value
+                            isP = true;
                             break;
                         }
                 }
@@ -306,7 +264,24 @@ class BeneficiaryCreate extends Component {
                     }
                 }))
                 this.getParish(this.state.cR, this.state.cD, data)
+            } else if (isP) {
+                this.setState(prevState => ({
+                    cP: data,
+                    errors: {
+                        ...prevState.errors,
+                        cP: false,
+                    }
+                }))
             } else {
+                let element = event.target.parentElement.parentElement.parentElement
+                if (element.className.includes('select__indicators css-1hb7zxy-IndicatorsContainer'))
+                    element = element.parentElement.parentElement
+                let data = null
+                if (elem !== null) {
+                    data = elem.value
+                } else {
+                    data = null
+                }
                 this.setState(prevState => ({
                     cP: data,
                     errors: {
@@ -328,14 +303,40 @@ class BeneficiaryCreate extends Component {
                     [d]: false,
                 }
             }))
-        } else
-            this.setState(prevState => ({
-                [event.target.name]: data,
-                errors: {
-                    ...prevState.errors,
-                    [event.target.name]: false,
-                }
-            }))
+        } else {
+            if (event.target.type === 'checkbox')
+                this.setState(prevState => ({
+                    [event.target.name]: event.target.checked,
+                    errors: {
+                        ...prevState.errors,
+                        [event.target.name]: false,
+                    }
+                }))
+            else
+                this.setState(prevState => ({
+                    [event.target.name]: data,
+                    errors: {
+                        ...prevState.errors,
+                        [event.target.name]: false,
+                    }
+                }))
+        }
+    }
+
+    handleRepeatableFieldChange(elem) {
+        let element = event.target.parentElement.parentElement.parentElement
+        if (element.className.includes('select__indicators css-1hb7zxy-IndicatorsContainer'))
+            element = element.parentElement.parentElement
+        let data = null
+        if (elem !== null) {
+            data = elem.value
+        } else {
+            data = null
+        }
+        let name = element.id
+        this.setState({
+            [name]: data
+        })
     }
 
     componentDidMount() {
@@ -347,14 +348,7 @@ class BeneficiaryCreate extends Component {
         this.setState({
             errors: errs
         })
-        // this.setState((prevState)=>({
-        //     errors: {
-        //         ...prevState.errors,
-        //         inputs: true
-        //     }
-        // }))
         this.getRegions()
-        this.getInputs()
         this.getOffices()
     }
 
@@ -421,16 +415,11 @@ class BeneficiaryCreate extends Component {
                         errors.splice(i, 1)
                     }
                 }
-                if (v === 'inputs') {
-                    if (this.state.inputs.length !== 0)
-                        fields[v] = Object.values(this.state)[k]
-                    else {
-                        errors.push('inputs')
-                    }
-                } else
-                    fields[v] = Object.values(this.state)[k]
+                fields[v] = Object.values(this.state)[k]
             }
         });
+        console.log(errors)
+        console.log(fields)
         if (fields.length <= 0 && errors.length > 0) {
             let stateErrors = {}
             for (const errorsKey in errors) {
@@ -446,33 +435,30 @@ class BeneficiaryCreate extends Component {
             this.setState({
                 submitting: true
             })
-            const form = {
-                'supplier_data': {
-                    'name': this.state.name,
-                    'district_id': this.state.cD,
-                    'slug': this.state.name.toLowerCase().split(' ').join('_'),
-                    'inputs': this.state.inputs,
-                    'region_id': this.state.cR,
-                    'parish_id': this.state.cP,
-                    'county_id': this.state.cC,
-                },
-                'contact_data': {
-                    'email': this.state.email,
-                    'phone_number': this.state.phone,
-                    'address': this.state.address,
-                },
-                'contract_data': {
-                    'contract_start': this.state.contract_start,
-                    'contract_end': this.state.contract_end,
-                    'details': this.state.details,
-                    'office_id': this.state.office,
-                    'status': this.state.status,
-                }
-            }
+            let form = new FormData()
+            // const form = {
+            form.append('name', this.state.fName + ' ' + this.state.mName + ' ' + this.state.lName,);
+            form.append('NIN', this.state.nin)
+            form.append('gender', this.state.gender)
+            form.append('is_pwd', this.state.is_pwd)
+            form.append('type_of_disability', this.state.type_of_disability,)
+            form.append('phone_number', this.state.phone_number,)
+            form.append('date_of_birth', this.state.dob,)
+            form.append('region_id', this.state.cR,)
+            form.append('district_id', this.state.cD,)
+            form.append('county_id', this.state.cC,)
+            form.append('parish_id', this.state.cP,)
+            form.append('office_id', this.state.office_id)
+            // }
+            if (document.querySelector("#ben_dp").files[0] !== null)
+                form.append('profile_pic', document.querySelector("#ben_dp").files[0], document.querySelector("#ben_dp").files[0].name)
+            // console.log(form)
 
-            await axios.post('/api/supplier', form)
+            await axios.post('/api/beneficiary', form)
                 .then(response => {
-                    console.log(response)
+                    // console.log(response)
+                    location.href = location.origin + '/dashboard/beneficiaries/list'
+                    // return (<Redirect to={'/dashboard/beneficiaries/list'}/>)
                 })
                 .catch(error => {
                     // console.warn(error.response.data.errors)
@@ -488,6 +474,12 @@ class BeneficiaryCreate extends Component {
         }
     }
 
+    image(event) {
+        this.setState({
+            dp: event
+        })
+    }
+
     render() {
         return (
             <>
@@ -495,52 +487,106 @@ class BeneficiaryCreate extends Component {
                     {this.state.alert}
                     <div className='header'>
                         <div className='container-fluid pt-4 pb-2'>
-                            <span className="text-2xl text-capitalize">Beneficiaries</span> <small>Add Beneficiary.</small><a
-                            href="/dashboard/beneficiaries/list"><i className="fa fa-angle-double-left"/> Back to all Beneficiaries</a>
+                            <span className="text-2xl text-capitalize">Beneficiaries</span> <small>Add
+                            Beneficiary.</small><a
+                            href="/dashboard/beneficiaries/list"><i className="fa fa-angle-double-left"/> Back to all
+                            Beneficiaries</a>
                         </div>
                     </div>
-                    <div className="col-md-10 bg-blue-gray-400 pb-7 d-none">
-                        <ul className="nav nav-tabs nav-justified mb-3" id="sCreate" role="tablist">
+                    <div className="col-md-10 bg-blue-gray-400 pb-7">
+                        <ul className="nav nav-tabs nav-justified mb-3" id="bCreate" role="tablist">
                             <li className="nav-item" role="presentation">
-                                <a href="#per-det-tab" className="nav-link active" id="per-det"
+                                <a href="#ben_det_tab" className="nav-link active" id="ben_det"
                                    data-mdb-toggle="tab"
-                                   role="tab" aria-controls="per-det-tab" aria-selected="true">
-                                    Personal Details
-                                </a>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <a href="#contact-tab" className="nav-link" id="contact" data-mdb-toggle="tab"
-                                   role="tab" aria-controls="contact-tab" aria-selected="false">
-                                    Contact Details
-                                </a>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <a href="#contract-tab" className="nav-link" id="contract" data-mdb-toggle="tab"
-                                   role="tab" aria-controls="contract-tab" aria-selected="false">
-                                    Contract
-                                </a>
-                            </li>
-                            <li className="nav-item" role="presentation">
-                                <a href="#inputs-tab" className="nav-link" id="inputs" data-mdb-toggle="tab"
-                                   role="tab" aria-controls="inputs-tab" aria-selected="false">
-                                    Inputs
+                                   role="tab"
+                                   aria-controls="ben_det_tab" aria-selected="true"
+                                >
+                                    Beneficiary Details
                                 </a>
                             </li>
                         </ul>
-                        <div className="tab-content bg-blue-gray-50 mt--3 p-4" id="sCreate-content">
-                            <div className="tab-pane fade show active" id="per-det-tab" role="tabpanel"
-                                 aria-labelledby="per-det">
+                        <div className="tabs-content bg-blue-gray-50 mt--3 p-4" id="bCreate-content">
+                            <div className="tab-pane fade show active" id="ben_det_tab" role="tabpanel"
+                                 aria-labelledby="ben_det">
                                 <div className="container">
                                     <div className="row">
                                         <TextInput
-                                            class={'col-sm-12 required'}
-                                            label={'Company Name'}
+                                            class={'col-sm-4 required'}
+                                            label={'First Name'}
                                             required={true}
-                                            field={'name'}
-                                            placeholder={'Company Name'}
+                                            field={'fName'}
+                                            placeholder={'First Name'}
                                             onChange={this.handleFieldChange}
-                                            value={this.state.name}
-                                            error={this.state.errors['name']}
+                                            value={this.state.fName}
+                                            error={this.state.errors['fName']}
+                                        />
+                                        <TextInput
+                                            class={'col-sm-4 required'}
+                                            label={'Middle Name'}
+                                            required={true}
+                                            field={'mName'}
+                                            placeholder={'Middle Name'}
+                                            onChange={this.handleFieldChange}
+                                            value={this.state.mName}
+                                            error={this.state.errors['mName']}
+                                        />
+                                        <TextInput
+                                            class={'col-sm-4 required'}
+                                            label={'Last Name'}
+                                            required={true}
+                                            field={'lName'}
+                                            placeholder={'Last Name'}
+                                            onChange={this.handleFieldChange}
+                                            value={this.state.lName}
+                                            error={this.state.errors['lName']}
+                                        />
+                                        <TextInput
+                                            class={'offset-md-2 col-sm-7 required'}
+                                            label={'NIN'}
+                                            required={true}
+                                            field={'nin'}
+                                            placeholder={'NIN'}
+                                            onChange={this.handleFieldChange}
+                                            value={this.state.nin}
+                                            error={this.state.errors['nin']}
+                                        />
+                                        <DateTimePicker
+                                            class={'col-sm-6 required'}
+                                            label={'Date of Birth'}
+                                            required={true}
+                                            id={'dob'}
+                                            field={'dob'}
+                                            initVal={true}
+                                            placeholder={'Date of Birth'}
+                                            onchange={this.handleFieldChange}
+                                            value={this.state.dob}
+                                            error={this.state.errors['dob']}
+                                        />
+                                        <DropDownInput
+                                            class={'col-sm-6 required'}
+                                            label={'Gender'}
+                                            required={true}
+                                            field={'gender'}
+                                            placeholder={'Gender'}
+                                            onChange={this.handleRepeatableFieldChange}
+                                            value={this.state.gender}
+                                            error={this.state.errors['gender']}
+                                            options={
+                                                [
+                                                    {
+                                                        label: 'Male',
+                                                        value: 'male'
+                                                    },
+                                                    {
+                                                        label: 'Female',
+                                                        value: 'female'
+                                                    },
+                                                    {
+                                                        label: 'Prefer not to say',
+                                                        value: 'other'
+                                                    },
+                                                ]
+                                            }
                                         />
                                         <DropDownInput
                                             class={'col-md-6 required'}
@@ -593,208 +639,95 @@ class BeneficiaryCreate extends Component {
                                             options={this.state.parishes}
                                             error={this.state.errors['cP']}
                                         />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="tab-pane fade" id="contact-tab" role="tabpanel"
-                                 aria-labelledby="contact">
-                                <div className="container">
-                                    <div className="row">
                                         <TextInput
-                                            class={'col-sm-12 required'}
-                                            label={'Email'}
-                                            type={'email'}
+                                            class={'col-sm-6 required'}
+                                            label={'Village/Cell'}
                                             required={true}
-                                            field={'email'}
-                                            placeholder={'Email Address'}
+                                            field={'village'}
+                                            placeholder={'village/Cell'}
                                             onChange={this.handleFieldChange}
-                                            value={this.state.email}
-                                            error={this.state.errors['email']}
+                                            value={this.state.village}
+                                            error={this.state.errors['village']}
                                         />
                                         <TextInput
-                                            class={'col-sm-12 required'}
+                                            class={'col-sm-6 required'}
                                             label={'Phone Number'}
                                             required={true}
-                                            field={'phone'}
-                                            type={'phone'}
-                                            placeholder={'Phone Number'}
+                                            field={'phone_number'}
+                                            placeholder={'+256xxxxxxxxx'}
                                             onChange={this.handleFieldChange}
-                                            value={this.state.phone}
-                                            error={this.state.errors['phone']}
+                                            value={this.state.phone_number}
+                                            error={this.state.errors['phone_number']}
                                         />
-                                        <TextInput
-                                            class={'col-sm-12 required'}
-                                            label={'Address'}
-                                            required={true}
-                                            field={'address'}
-                                            placeholder={'Address'}
+                                        <CustomInput
+                                            className={'col-sm-6 required'}
+                                            label={'Person With Disability'}
+                                            type={'checkbox'}
+                                            id={'pwd'}
+                                            inline={false}
+                                            name={'is_pwd'}
+                                            placeholder={'Person with Disability'}
                                             onChange={this.handleFieldChange}
-                                            value={this.state.address}
-                                            error={this.state.errors['address']}
+                                            value={this.state.is_pwd}
                                         />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="tab-pane fade" id="contract-tab" role="tabpanel"
-                                 aria-labelledby="contract">
-                                <div className="container">
-                                    <div className="row">
-                                        <DateTimePicker
-                                            class={'col-sm-6 required'}
-                                            label={'Contract Start'}
-                                            required={true}
-                                            id={'contract_start'}
-                                            field={'contract_start'}
-                                            placeholder={'Start'}
-                                            onchange={this.handleFieldChange}
-                                            value={this.state.contract_start}
-                                            error={this.state.errors['contract_start']}
-                                        />
-                                        <DateTimePicker
-                                            class={'col-sm-6 required'}
-                                            label={'Contract End'}
-                                            required={true}
-                                            field={'contract_end'}
-                                            id={'contract_end'}
-                                            placeholder={'End'}
-                                            onchange={this.handleFieldChange}
-                                            value={this.state.contract_end}
-                                            error={this.state.errors['contract_end']}
-                                        />
-                                        <TextAreaInput
-                                            class={'col-sm-12 offset-md-3 col-md-6 required'}
-                                            label={'Details'}
-                                            required={true}
-                                            field={'details'}
-                                            aria-multiline={true}
-                                            name={'details'}
-                                            value={this.state.details}
-                                            onChange={this.handleFieldChange}
-                                            error={this.state.errors['details']}
-                                        />
+                                        {
+                                            this.state.errors['is_pwd'] === true ?
+                                                <>
+                                                    <span className="text-left text-danger">Required.</span>
+                                                </>
+                                                : <></>
+                                        }
                                         <DropDownInput
                                             class={'col-md-6 required'}
+                                            label={'Type Of Disability'}
+                                            field={'type_of_disability'}
+                                            onChange={this.handleRepeatableFieldChange}
+                                            value={this.state.type_of_disability}
+                                            clearable={true}
+                                            options={[
+                                                {
+                                                    value: 'single',
+                                                    label: 'Single'
+                                                },
+                                                {
+                                                    value: 'married',
+                                                    label: 'Married'
+                                                },
+                                                {
+                                                    value: 'other',
+                                                    label: 'Prefer not to say'
+                                                },
+                                            ]}
+                                            error={this.state.is_pwd ? this.state.errors['type_of_disability'] : false}
+                                        />
+                                        <DropDownInput
+                                            class={'col-md-10 required'}
                                             label={'Office'}
                                             required={true}
-                                            field={'office'}
+                                            field={'office_id'}
                                             onChange={this.handleOfficeFieldChange}
-                                            value={this.state.office}
+                                            value={this.state.office_id}
                                             clearable={true}
                                             options={this.state.offices}
-                                            error={this.state.errors['office']}
+                                            error={this.state.errors['office_id']}
                                         />
-                                        <DropDownInput
-                                            class={'col-md-6 required'}
-                                            label={'Status'}
-                                            required={true}
-                                            field={'status'}
-                                            onChange={this.handleOfficeFieldChange}
-                                            value={this.state.status}
-                                            clearable={true}
-                                            options={this.state.statuses}
-                                            error={this.state.errors['status']}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className={"tab-pane fade"} id="inputs-tab" role="tabpanel"
-                                 aria-labelledby="inputs">
-                                <div
-                                    className={"container-repeatable-elements ".concat(this.state.errors['inputs'] ? "p-4 m--4 border border-danger" : "")}>
-                                    <div data-repeatable-holder={'inputs'} data-init-rows={'1'}
-                                         data-max-rows={0} data-min-rows={'1'}
-                                         number-of-rows={this.state.inputs.length}>
-                                        {
-                                            this.state.inputs.map((input, index) => (
-                                                <div key={index} data-content={input}
-                                                     className="col-md-12 well repeatable-element row m-1 p-2"
-                                                     data-repeatable-identifier={'inputs'}
-                                                     data-row-number={index.toString()}>
-                                                    <button
-                                                        onClick={this.deleteItem}
-                                                        data-row={index}
-                                                        className={(this.state.inputs.length !== 1) ? "close delete-element" : 'close delete-element d-none'}
-                                                        style={{paddingLeft: '0.285rem'}} type={'button'}>
-                                                        <span aria-hidden="true" data-row={index}>
-                                                            <i data-row={index} className="fa fa-times"/></span>
-                                                    </button>
-                                                    <DropDownInput
-                                                        class={'col-12 mb--1 required'}
-                                                        label={'Input'}
-                                                        required={true}
-                                                        field={index.toString() + '_input_id'}
-                                                        name={'input_id'}
-                                                        id={index.toString() + '_input'}
-                                                        onChange={this.handleRepeatableFieldChange}
-                                                        value={this.getRepeatableValue(index, 'input')}
-                                                        clearable={true}
-                                                        options={this.state.is}
-                                                    />
-                                                    <QuantityInput
-                                                        class={'col-6 mb--1 required'}
-                                                        label={'Quantity'}
-                                                        required={true}
-                                                        dataRow={index.toString()}
-                                                        field={'quantity'}
-                                                        onChange={this.handleQuantityFieldChange}
-                                                        value={this.getRepeatableValue(index, 'quantity')}
-                                                    />
-                                                    <RateInput
-                                                        class={'col-6 mb--1 required'}
-                                                        label={'Rate'}
-                                                        required={true}
-                                                        dataRow={index.toString()}
-                                                        field={'rate'}
-                                                        onChange={this.handleRateFieldChange}
-                                                        value={this.getRepeatableValue(index, 'rate')}
-                                                    />
-                                                    <TotalInput
-                                                        class={'col-6 mb--1 offset-3 required'}
-                                                        label={'Total'}
-                                                        required={true}
-                                                        field={'total'}
-                                                        dataRow={index.toString()}
-                                                        readOnly={true}
-                                                        value={this.getRepeatableValue(index, 'total')}
-                                                    />
-                                                    <DropDownInput
-                                                        class={'col-12 required'}
-                                                        label={'Office'}
-                                                        required={true}
-                                                        name={'office_id'}
-                                                        field={index.toString() + '_office_id'}
-                                                        onChange={this.handleRepeatableFieldChange}
-                                                        value={this.getRepeatableValue(index, 'office')}
-                                                        clearable={true}
-                                                        options={this.state.offices}
-                                                    />
-                                                </div>
-                                            ))
-                                        }
+                                        <Col sm={12} md={12}>
+                                            <ImageUploads onChange={this.image}/>
+                                        </Col>
                                         <button
-                                            onClick={this.handleAddNew}
-                                            className="btn btn-outline-primary btn-sm ml-1 add-repeatable-element-button"
-                                            type="button"><i className="fa fa-plus"/> Add Item
+                                            className={"mt-3 col-6 offset-3 block btn btn-lg ".concat(this.state.submitting ? 'btn-success' : 'btn-success')}
+                                            aria-disabled={"true"}
+                                            style={{
+                                                cursor: this.state.submitting ? 'wait' : 'pointer',
+                                                opacity: this.state.submitting ? '0.6' : '1'
+                                            }}
+                                            onClick={this.handleSubmit}>
+                                            Submit
                                         </button>
-                                        <div className="row">
-                                            <button
-                                                className={"col-6 offset-3 block btn btn-lg ".concat(this.state.submitting ? 'btn-success' : 'btn-success')}
-                                                aria-disabled={"true"}
-                                                style={{
-                                                    cursor: this.state.submitting ? 'wait' : 'pointer',
-                                                    opacity: this.state.submitting ? '0.6' : '1'
-                                                }}
-                                                onClick={this.handleSubmit}>
-                                                Submit
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-md-10 bg-blue-gray-400 pt-6 pb-7 text-center">
-                            <h1 className="jumbotron pt-5">In Development.</h1>
                     </div>
                 </div>
             </>
@@ -830,6 +763,81 @@ class BeneficiaryCreate extends Component {
             offices: reg,
         })
     }
+}
+
+class ImageUploads extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            image: {},
+            success: '',
+            error: '',
+            imagePreviewUrl: false
+        }
+
+        this.fileUpload = this.fileUpload.bind(this)
+        this.onChange = this.onChange.bind(this)
+    }
+
+    onChange(event) {
+        let files = event.target.files || event.dataTransfer.files
+        if (!files.length) return
+        this.props.onChange(files[0])
+        this.createImage(files[0])
+    }
+
+    createImage(file) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            this.setState({
+                image: file,
+                imagePreviewUrl: e.target.result
+            })
+        }
+        reader.readAsDataURL(file)
+    }
+
+    fileUpload() {
+
+    }
+
+    render() {
+        return (
+            <>
+                <Row>
+                    <Col xs={12} md={6} sm={12} lg={6} xl={6}>
+                        {
+                            new images({
+                                onChange: this.onChange
+                            })
+                        }
+                    </Col>
+                    <Col xs={12} md={6} sm={12} lg={6} xl={6}>
+                        <div className="imgPreview">
+                            {this.state.imagePreviewUrl ? (
+                                <img className={`add_imagem`} name={`add_imagem`} width={200} height={150}
+                                     src={this.state.imagePreviewUrl}/>) : ('')}
+                        </div>
+                    </Col>
+                </Row>
+            </>
+        )
+    }
+}
+
+const images = (props) => {
+    return (
+        <>
+            <div className='buttons fadein'>
+                <div className='button'>
+                    <label htmlFor='ben_dp'>
+                        <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x'/>
+                    </label>
+                    <input type='file' id='ben_dp' onChange={props.onChange} hidden={true}/>
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default BeneficiaryCreate

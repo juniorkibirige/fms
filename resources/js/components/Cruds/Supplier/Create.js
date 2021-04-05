@@ -7,6 +7,7 @@ import TextAreaInput from "../../Fields/TextAreaInput";
 import QuantityInput from "../../Fields/QuantityInput";
 import RateInput from "../../Fields/RateInput";
 import TotalInput from "../../Fields/TotalInput";
+import {Redirect} from "react-router-dom";
 
 const realFields = [
     'name', 'cR', 'cD', 'cC',
@@ -472,7 +473,7 @@ class SupplierCreate extends Component {
 
             await axios.post('/api/supplier', form)
                 .then(response => {
-                    console.log(response)
+                    return (<Redirect to={'/dashboard/supplier/list'}/>)
                 })
                 .catch(error => {
                     // console.warn(error.response.data.errors)
