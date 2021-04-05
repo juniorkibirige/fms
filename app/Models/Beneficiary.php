@@ -25,9 +25,12 @@ class Beneficiary extends Model
         'date_of_birth',
         'phone_number',
         'age',
+        'region_id',
+        'parish_id',
         'district_id',
         'county_id',
-        'office_id'
+        'office_id',
+        'profile_pic'
     ];
 
     /* ----------------------------------------------------------------- */

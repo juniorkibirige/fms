@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -33,9 +34,9 @@ class BeneficiaryRequest extends FormRequest
                 'required',
                 Rule::in(['other', 'male', 'female'])
             ],
-            'type_of_disability' => 'required_if:gender,true',
+            'is_pwd' => 'present',
+            'type_of_disability' => 'required_if:is_pwd,true',
             'phone_number' => 'required',
-            'age' => 'required|integer',
             'district_id' => 'required',
             'county_id' => 'required',
             'office_id' => 'required',

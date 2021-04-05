@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Beneficiary;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Supplier;
+use App\Observers\BeneficiaryObserver;
 use App\Observers\PermissionObserver;
 use App\Observers\RoleObserver;
 use App\Observers\SupplierObserver;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         }
         Supplier::observe(SupplierObserver::class);
         Permission::observe(PermissionObserver::class);
+        Beneficiary::observe(BeneficiaryObserver::class);
         Role::observe(RoleObserver::class);
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));

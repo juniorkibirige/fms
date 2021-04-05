@@ -55,7 +55,7 @@ class SupplierObserver
      */
     public function updated(Supplier $supplier)
     {
-        //
+        $this->updateData($supplier);
     }
 
     /**
@@ -77,7 +77,7 @@ class SupplierObserver
      */
     public function restored(Supplier $supplier)
     {
-        //
+        $this->updateData($supplier);
     }
 
     /**
