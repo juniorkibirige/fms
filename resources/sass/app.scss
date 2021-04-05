@@ -107,3 +107,32 @@ button.disabled:not(:disabled), button.disabled, button.disabled:disabled, butto
 .react-bootstrap-table-pagination-list-hidden {
     display: none
 }
+
+@include media-breakpoint-only(md) {
+    .navbar-collapse {
+        margin-right: 0.7rem !important;
+        margin-left: 0.7rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+@include media-breakpoint-only(xs) {
+    .navbar-collapse {
+        margin-right: 0.7rem !important;
+        margin-left: 0.7rem !important;
+    }
+}
+
+@include media-breakpoint-only(sm) {
+    .navbar-collapse {
+        margin-right: 0.7rem !important;
+        margin-left: 0.7rem !important;
+    }
+}
+
+.navbar-collapse {
+    padding-left: 1rem !important;
+    margin-right: -1.5rem !important;
+    padding-right: 1.5rem !important;
+}
