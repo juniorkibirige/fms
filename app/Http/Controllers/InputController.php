@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Input;
+use App\Models\Office;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -26,7 +27,15 @@ class InputController extends Controller
         $inputs = Input::query()
             ->where(['deleted_at' => null])
             ->get(['id', 'name', 'type', 'description', 'extras', 'office_id']);
-        return \response(json_encode($inputs), 200);
+        $b = [];
+        $i = 0;
+        foreach ($inputs as $beneficiary) {
+            $did = Office::find($beneficiary->office_id)->name;
+            $beneficiary->office = $did;
+            $b[$i++] = $beneficiary;
+        }
+        $res = ['inputs' => $b];
+        return \response($res, 200);
     }
 
     /**
