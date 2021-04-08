@@ -32,7 +32,7 @@ class BeneficiaryCreate extends Component {
             errors: {},
             alert: null,
         }
-        document.title = document.title.split(':')[0] + " : Supplier Create"
+        document.title = document.title.split(':')[0] + " : Beneficiary Create"
         this.handleRepeatableFieldChange = this.handleRepeatableFieldChange.bind(this)
         this.handleOfficeFieldChange = this.handleOfficeFieldChange.bind(this)
         this.handleFieldChange = this.handleFieldChange.bind(this)

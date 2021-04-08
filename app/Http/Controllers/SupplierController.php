@@ -10,6 +10,7 @@ use App\Models\Region;
 use App\Models\Supplier;
 use App\Models\SupplierContact;
 use App\Models\SupplierContract;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -48,9 +49,9 @@ class SupplierController extends Controller
      * Store a newly created resource in storage.
      *
      * @param SupplierRequest $request
-     * @return RedirectResponse
+     * @return Response
      */
-    public function store(SupplierRequest $request): RedirectResponse
+    public function store(SupplierRequest $request): Response
     {
         $supplierData = $request->supplier_data;
         $contactData = $request->contact_data;
@@ -63,11 +64,16 @@ class SupplierController extends Controller
         $supplierData['supplier_contracts_id'] = $crId;
         $s = Supplier::create($supplierData);
         $inputData = $supplierData['inputs'];
+        $inputs = [];
         for ($i = 0; $i < count($supplierData['inputs']); $i++) {
-
+            $input = $supplierData['inputs'][$i];
+            $input['created_at'] = Carbon::now();
+            $input['updated_at'] = Carbon::now();
+            $inputs[$i] = $input;
         }
-        $s->inputsRel()->sync($supplierData['inputs'], false);
-        return redirect('/dashboard/supplier/list');
+        $s->inputsRel()->sync($inputs, false);
+        $res = ['supplier' => $s];
+        return \response($res, 201);
     }
 
     /**

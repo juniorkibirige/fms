@@ -7,7 +7,6 @@ import TextAreaInput from "../../Fields/TextAreaInput";
 import QuantityInput from "../../Fields/QuantityInput";
 import RateInput from "../../Fields/RateInput";
 import TotalInput from "../../Fields/TotalInput";
-import {Redirect} from "react-router-dom";
 
 const realFields = [
     'name', 'cR', 'cD', 'cC',
@@ -166,8 +165,8 @@ class SupplierCreate extends Component {
         let name
         if (ids.length === 2)
             name = ids[1]
-        else if(ids.length > 2) {
-            ids.splice(0,1)
+        else if (ids.length > 2) {
+            ids.splice(0, 1)
             name = ids.join('_')
         }
         let row = parseInt(element.id.split('_')[0])
@@ -473,7 +472,7 @@ class SupplierCreate extends Component {
 
             await axios.post('/api/supplier', form)
                 .then(response => {
-                    return (<Redirect to={'/dashboard/supplier/list'}/>)
+                    location.href = location.origin + '/dashboard/supplier/list'
                 })
                 .catch(error => {
                     // console.warn(error.response.data.errors)

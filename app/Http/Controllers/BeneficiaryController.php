@@ -6,6 +6,7 @@ use App\Http\Requests\BeneficiaryRequest;
 use App\Models\Beneficiary;
 use App\Models\Constituency;
 use App\Models\District;
+use App\Models\Region;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,9 +27,9 @@ class BeneficiaryController extends Controller
         $i = 0;
         foreach ($beneficiaries as $beneficiary) {
             $did = District::find($beneficiary->district_id)->name;
-            $rid = Constituency::find($beneficiary->county_id)->name;
+            $rid = Region::find($beneficiary->region_id)->name;
             $beneficiary->district = $did;
-            $beneficiary->county = $rid;
+            $beneficiary->region = $rid;
             $b[$i++] = $beneficiary;
         }
         $res = ['beneficiaries' => $b];

@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 
-// import ToolkitProvider from 'react-bootstrap-table2-toolkit'
 import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min';
-import filterFactory, {textFilter} from 'react-bootstrap-table2-filter'
 
 import {Col, Row} from 'reactstrap'
 import BootstrapTable from 'react-bootstrap-table-next'
@@ -142,15 +140,21 @@ class SupplierList extends Component {
                                         dataField: 'id',
                                         text: 'ID',
                                         hidden: false,
-                                        classes: 'col-1'
+                                        classes: 'col-1',
+                                        headerClasses: `col-1`,
+                                        style:{
+                                            maxWidth: '4%'
+                                        },
+                                        headerStyle:{
+                                            maxWidth: '4%'
+                                        }
                                     },
                                     {
                                         dataField: 'name',
                                         text: 'Name',
                                         hidden: false,
-                                        classes: 'col-md-2 col-sm-3',
+                                        classes: 'col-md-2 col-sm-3 col-auto',
                                         sort: true,
-                                        filter: textFilter(),
                                     },
                                     {
                                         dataField: 'phone',
@@ -165,7 +169,6 @@ class SupplierList extends Component {
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
-                                        filter: textFilter(),
                                     },
                                     {
                                         dataField: 'district',
@@ -173,13 +176,12 @@ class SupplierList extends Component {
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
-                                        filter: textFilter(),
                                     },
                                     {
                                         dataField: 'actions',
                                         isDummyField: true,
-                                        classes: 'col-md-2 col-sm-2',
-                                        headerClasses: 'col-md-2 col-sm-2',
+                                        classes: 'col-md-2 col-sm-3 col-auto',
+                                        headerClasses: 'col-md-2 col-sm-2 col-auto',
                                         text: '',
                                         hidden: false,
                                         formatter: this.actionButtons
@@ -210,7 +212,6 @@ class SupplierList extends Component {
                                                 classes={`table-white`}
                                                 bootstrap4={true}
                                                 bordered={true}
-                                                filter={ filterFactory() }
                                                 filterPosition={'top'}
                                                 pagination={paginationFactory({
                                                     showTotal: true,
