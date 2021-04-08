@@ -29,8 +29,17 @@
     <link type="text/css" href="{{ asset('argon/css/argon.css?v=1.0.0') }}" rel="stylesheet">
 </head>
 <body class="g-sidenav-pinned bg-white">
-<!-- <body class=""> -->
-
+<div id="loader-wrapper">
+    <div class="tt-loading-center">
+        <div class="tt-loading-center-absolute">
+            <div class="tt-object object_four"></div>
+            <div class="tt-object object_three"></div>
+            <div class="tt-object object_two"></div>
+            <div class="tt-object object_one"></div>
+        </div>
+    </div>
+    <div id="loading-text">Setting up environment</div>
+</div>
 <div id="root"></div>
 <img rel="prefetch" src="{{asset('/assets/img/theme/spinner.gif') }}" alt="img" class="d-none">
 <script src="{{ asset('argon/vendor/jquery/dist/jquery.min.js') }}"></script>
@@ -43,13 +52,18 @@
 ></script>
 <script type="text/javascript" src="{{asset('argon/js/vendor/moment.js/2.21.0/moment.min.js')}}"></script>
 <script src="{{asset('argon/js/bootstrap-datetimepicker.min.js')}}"></script>
-<script src="{{ asset('js/app.js') }}"></script>
+{{--<script src="{{ asset('js/app.js') }}"></script>--}}
 
 @stack('js')
 
 <!-- Argon JS -->
 <script src="{{ asset('argon/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ asset('argon/js/argon.js?v=1.0.0') }}"></script>
+<script>
+    $.getScript("{{asset('js/app.js')}}", () => {
+        $('#loader-wrapper').fadeOut()
+    })
+</script>
 
 </body>
 </html>
