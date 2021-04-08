@@ -29,7 +29,7 @@
     <link type="text/css" href="{{ asset('argon/css/argon.css?v=1.0.0') }}" rel="stylesheet">
 </head>
 <body class="g-sidenav-pinned bg-white">
-<div id="loader-wrapper">
+<div id="loader-wrapper" style="display: block">
     <div class="tt-loading-center">
         <div class="tt-loading-center-absolute">
             <div class="tt-object object_four"></div>
@@ -46,13 +46,14 @@
 <!-- <script src="{{ asset('argon/vendor/@fortawesome/fontawesome-free/js/all.min.js') }}"></script> -->
 {{--<script src="//kit.fontawesome.com/0be66f9bc5.js" crossorigin="anonymous"></script>--}}
 <script src="{{ asset('argon/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-<script
-    type="text/javascript"
-    src="{{ asset('argon/js/vendor/mdb-ui-kit/3.3.0/mdb.min.js') }}"
-></script>
+<script type="text/javascript" src="{{ asset('argon/js/vendor/mdb-ui-kit/3.3.0/mdb.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('argon/js/vendor/moment.js/2.21.0/moment.min.js')}}"></script>
 <script src="{{asset('argon/js/bootstrap-datetimepicker.min.js')}}"></script>
-{{--<script src="{{ asset('js/app.js') }}"></script>--}}
+<script>
+    $.getScript("{{asset('js/app.js')}}", () => {
+        $('#loader-wrapper').fadeOut()
+    })
+</script>
 
 @stack('js')
 
