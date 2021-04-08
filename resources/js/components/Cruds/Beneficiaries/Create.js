@@ -6,7 +6,6 @@ import DropDownInput from "../../Fields/DropDownInput";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faImage} from '@fortawesome/free-solid-svg-icons'
 import {Col, CustomInput, Row} from "reactstrap";
-import {Redirect} from "react-router-dom";
 
 const realFields = [
     'fName', 'mName', 'lName', 'cR', 'cD', 'cC',
@@ -405,7 +404,8 @@ class BeneficiaryCreate extends Component {
         let fields = []
         let errors = []
         realFields.map((v) => {
-            errors.push(v)
+            if (v !== 'mName')
+                errors.push(v)
         })
         Object.keys(this.state).map((v, k) => {
             if (!nonFields.includes(v)) {
@@ -437,7 +437,7 @@ class BeneficiaryCreate extends Component {
             })
             let form = new FormData()
             // const form = {
-            form.append('name', this.state.fName + ' ' + this.state.mName + ' ' + this.state.lName,);
+            form.append('name', this.state.fName + ' ' + this.state.mName ?? '' + ' ' + this.state.lName,);
             form.append('NIN', this.state.nin)
             form.append('gender', this.state.gender)
             form.append('is_pwd', this.state.is_pwd)
@@ -523,7 +523,7 @@ class BeneficiaryCreate extends Component {
                                         <TextInput
                                             class={'col-sm-4 required'}
                                             label={'Middle Name'}
-                                            required={true}
+                                            required={false}
                                             field={'mName'}
                                             placeholder={'Middle Name'}
                                             onChange={this.handleFieldChange}
