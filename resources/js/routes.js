@@ -5,6 +5,8 @@ import SupplierCreate from "./components/Cruds/Supplier/Create";
 import Tables from "./views/examples/Tables";
 import BeneficiaryList from "./components/Cruds/Beneficiaries/List";
 import BeneficiaryCreate from "./components/Cruds/Beneficiaries/Create";
+import InputsList from "./components/Cruds/Inputs/List";
+import InputsCreate from "./components/Cruds/Inputs/Create";
 
 const routes = [
     {
@@ -79,7 +81,7 @@ const routes = [
                 icon: "fa fa-cube text-white",
                 classes: "pl-4",
                 miniName: "AI",
-                component: Tables,
+                component: InputsList,
                 layout: "/dashboard"
             },
             {
@@ -88,7 +90,7 @@ const routes = [
                 icon: "fa fa-plus-circle text-white",
                 classes: "pl-4",
                 miniName: "+I",
-                component: Tables,
+                component: InputsCreate,
                 layout: "/dashboard"
             },
         ],
@@ -105,6 +107,7 @@ const routes = [
         name: "Settings",
         state: "settingsCollapse",
         icon: "fa fa-cog text-orange",
+        hidden: true,
         views: [
             {
                 path: "/settings/category",
