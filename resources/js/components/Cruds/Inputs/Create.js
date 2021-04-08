@@ -98,7 +98,8 @@ class InputsCreate extends Component {
         let fields = []
         let errors = []
         realFields.map((v) => {
-            errors.push(v)
+            if (v !== 'extras')
+                errors.push(v)
         })
         Object.keys(this.state).map((v, k) => {
             if (!nonFields.includes(v)) {
@@ -111,8 +112,7 @@ class InputsCreate extends Component {
                 fields[v] = Object.values(this.state)[k]
             }
         });
-        console.log(errors)
-        console.log(fields)
+
         if (fields.length <= 0 && errors.length > 0) {
             let stateErrors = {}
             for (const errorsKey in errors) {
@@ -134,27 +134,22 @@ class InputsCreate extends Component {
             form.append('description', this.state.description)
             form.append('extras', this.state.extras)
             form.append('office_id', this.state.office_id,)
-            // if (document.querySelector("#ben_dp").files[0] !== null)
-            //     form.append('profile_pic', document.querySelector("#ben_dp").files[0], document.querySelector("#ben_dp").files[0].name)
-            // console.log(form)
 
-            // await axios.post('/api/input', form)
-            //     .then(response => {
-            //         // console.log(response)
-            //         location.href = location.origin + '/dashboard/inputs/list'
-            //         // return (<Redirect to={'/dashboard/beneficiaries/list'}/>)
-            //     })
-            //     .catch(error => {
-            //         // console.warn(error.response.data.errors)
-            //         // this.setState({
-            //         //     errors: error.response.data.errors
-            //         // })
-            //     })
-            //     .finally(() => {
-            //         this.setState({
-            //             submitting: false
-            //         })
-            //     })
+            await axios.post('/api/input', form)
+                .then(response => {
+                    location.href = location.origin + '/dashboard/inputs/list'
+                })
+                .catch(error => {
+                    // console.warn(error.response.data.errors)
+                    // this.setState({
+                    //     errors: error.response.data.errors
+                    // })
+                })
+                .finally(() => {
+                    this.setState({
+                        submitting: false
+                    })
+                })
         }
     }
 
@@ -191,7 +186,7 @@ class InputsCreate extends Component {
                                             placeholder={'Input Name'}
                                             onChange={this.handleFieldChange}
                                             value={this.state.name}
-                                            error={this.state.errors['n']}
+                                            error={this.state.errors['name']}
                                         />
                                         <TextInput
                                             class={'col-sm-8 required'}
@@ -216,7 +211,7 @@ class InputsCreate extends Component {
                                         <TextAreaInput
                                             class={'col-sm-7 required'}
                                             label={'Extras'}
-                                            required={true}
+                                            required={false}
                                             field={'extras'}
                                             placeholder={'Any other data about the input ...'}
                                             onChange={this.handleFieldChange}

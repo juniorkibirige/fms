@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InputRequest;
 use App\Models\Input;
 use App\Models\Office;
 use Illuminate\Http\Request;
@@ -41,12 +42,14 @@ class InputController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param InputRequest $request
      * @return Response
      */
-    public function store(Request $request): Response
+    public function store(InputRequest $request): Response
     {
-        //
+        $b = Input::create($request->all());
+        $res = ['input' => $b];
+        return \response($res, 201);
     }
 
     /**
