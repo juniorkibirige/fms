@@ -29,4 +29,7 @@ Route::group(['middleware' => ['auth:api', 'cors', 'json.response']], function (
     Route::resource('beneficiary', 'BeneficiaryController')->except([
         'edit', 'create'
     ]);
+    Route::resource('distributions', 'DistributionController')->except([
+        'edit', 'create'
+    ]);
 });

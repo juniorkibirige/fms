@@ -141,12 +141,6 @@ class SupplierList extends Component {
                                         hidden: false,
                                         classes: 'col-1',
                                         headerClasses: `col-1`,
-                                        style:{
-                                            maxWidth: '4%'
-                                        },
-                                        headerStyle:{
-                                            maxWidth: '4%'
-                                        }
                                     },
                                     {
                                         dataField: 'name',

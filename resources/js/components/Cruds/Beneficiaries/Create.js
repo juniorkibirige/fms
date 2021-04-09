@@ -404,8 +404,9 @@ class BeneficiaryCreate extends Component {
         let fields = []
         let errors = []
         realFields.map((v) => {
-            if (v !== 'mName')
+            if (v !== 'mName' && v !== 'type_of_disability' && v !== 'is_pwd') {
                 errors.push(v)
+            }
         })
         Object.keys(this.state).map((v, k) => {
             if (!nonFields.includes(v)) {
@@ -417,9 +418,7 @@ class BeneficiaryCreate extends Component {
                 }
                 fields[v] = Object.values(this.state)[k]
             }
-        });
-        console.log(errors)
-        console.log(fields)
+        })
         if (fields.length <= 0 && errors.length > 0) {
             let stateErrors = {}
             for (const errorsKey in errors) {
@@ -436,7 +435,6 @@ class BeneficiaryCreate extends Component {
                 submitting: true
             })
             let form = new FormData()
-            // const form = {
             form.append('name', this.state.fName + ' ' + this.state.mName ?? '' + ' ' + this.state.lName,);
             form.append('NIN', this.state.nin)
             form.append('gender', this.state.gender)
@@ -449,10 +447,8 @@ class BeneficiaryCreate extends Component {
             form.append('county_id', this.state.cC,)
             form.append('parish_id', this.state.cP,)
             form.append('office_id', this.state.office_id)
-            // }
             if (document.querySelector("#ben_dp").files[0] !== null)
                 form.append('profile_pic', document.querySelector("#ben_dp").files[0], document.querySelector("#ben_dp").files[0].name)
-            // console.log(form)
 
             await axios.post('/api/beneficiary', form)
                 .then(response => {
@@ -677,29 +673,44 @@ class BeneficiaryCreate extends Component {
                                                 </>
                                                 : <></>
                                         }
-                                        <DropDownInput
-                                            class={'col-md-6 required'}
-                                            label={'Type Of Disability'}
-                                            field={'type_of_disability'}
-                                            onChange={this.handleRepeatableFieldChange}
-                                            value={this.state.type_of_disability}
-                                            clearable={true}
-                                            options={[
-                                                {
-                                                    value: 'single',
-                                                    label: 'Single'
-                                                },
-                                                {
-                                                    value: 'married',
-                                                    label: 'Married'
-                                                },
-                                                {
-                                                    value: 'other',
-                                                    label: 'Prefer not to say'
-                                                },
-                                            ]}
-                                            error={this.state.is_pwd ? this.state.errors['type_of_disability'] : false}
-                                        />
+                                        {
+                                            this.state.is_pwd ?
+                                                <DropDownInput
+                                                    class={'col-md-6 required'}
+                                                    label={'Type Of Disability'}
+                                                    field={'type_of_disability'}
+                                                    onChange={this.handleRepeatableFieldChange}
+                                                    value={this.state.type_of_disability}
+                                                    clearable={true}
+                                                    options={[
+                                                        {
+                                                            value: 'physical',
+                                                            label: 'Physical Disabilities'
+                                                        },
+                                                        {
+                                                            value: 'visual',
+                                                            label: 'Visual Disabilities'
+                                                        },
+                                                        {
+                                                            value: 'hearing',
+                                                            label: 'Hearing Disabilities'
+                                                        },
+                                                        {
+                                                            value: 'mental',
+                                                            label: 'Mental Health Disabilities'
+                                                        },
+                                                        {
+                                                            value: 'intellectual',
+                                                            label: 'Intellectual Disabilities'
+                                                        },
+                                                        {
+                                                            value: 'learning',
+                                                            label: 'Learning Disabilities'
+                                                        }
+                                                    ]}
+                                                    error={this.state.is_pwd ? this.state.errors['type_of_disability'] : false}
+                                                /> : <></>
+                                        }
                                         <DropDownInput
                                             class={'col-md-10 required'}
                                             label={'Office'}
