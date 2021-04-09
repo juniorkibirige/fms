@@ -117,7 +117,6 @@ class SupplierList extends Component {
         });
     }
 
-
     render() {
         return (
             <>
