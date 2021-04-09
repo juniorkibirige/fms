@@ -7,6 +7,8 @@ import BeneficiaryList from "./components/Cruds/Beneficiaries/List";
 import BeneficiaryCreate from "./components/Cruds/Beneficiaries/Create";
 import InputsList from "./components/Cruds/Inputs/List";
 import InputsCreate from "./components/Cruds/Inputs/Create";
+import DistributionList from "./components/Cruds/Distribution/List";
+import DistributionCreate from "./components/Cruds/Distribution/Create";
 
 const routes = [
     {
@@ -91,6 +93,32 @@ const routes = [
                 classes: "pl-4",
                 miniName: "+I",
                 component: InputsCreate,
+                layout: "/dashboard"
+            },
+        ],
+    },
+    {
+        collapse: true,
+        name: "Distribution",
+        state: "distributionCollapse",
+        icon: "fa fa-cubes text-white",
+        views: [
+            {
+                path: "/distribution/list",
+                name: "Distribution Logs",
+                icon: "fa fa-cube text-white",
+                classes: "pl-4",
+                miniName: "DL",
+                component: DistributionList,
+                layout: "/dashboard"
+            },
+            {
+                path: "/distribution/create",
+                name: "Distribute Inputs",
+                icon: "fa fa-plus-circle text-white",
+                classes: "pl-4",
+                miniName: "+D",
+                component: DistributionCreate,
                 layout: "/dashboard"
             },
         ],
