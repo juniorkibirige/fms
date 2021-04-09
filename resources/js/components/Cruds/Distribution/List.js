@@ -6,6 +6,7 @@ import {Col, Row} from 'reactstrap'
 import BootstrapTable from 'react-bootstrap-table-next'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import Select from "react-select";
+import axios from "axios";
 
 const {SearchBar} = Search;
 
@@ -14,7 +15,7 @@ class DistributionList extends Component {
         super(props);
         this.state = {
             refreshing: false,
-            distribution: [],
+            distributions: [],
             alert: ''
         }
         document.title = document.title.split(':')[0] + " : Distribution Logs"
@@ -85,6 +86,14 @@ class DistributionList extends Component {
         )
     }
 
+    componentDidMount() {
+        axios.get('/api/distributions').then(response => {
+            this.setState({
+                distributions: response.data.distributions,
+            });
+        });
+    }
+
     render() {
         return (
             <>
@@ -100,25 +109,18 @@ class DistributionList extends Component {
                     <Row className='align-items-center py-4'>
                         <Col>
                             <ToolkitProvider
-                                data={this.state.distribution}
+                                data={this.state.distributions}
                                 keyField="id"
                                 columns={[
                                     {
                                         dataField: 'id',
                                         text: 'ID',
-                                        hidden: true,
-                                        classes: 'col-1',
+                                        hidden: false,
                                         headerClasses: `col-1`,
-                                        style:{
-                                            maxWidth: '4%'
-                                        },
-                                        headerStyle:{
-                                            maxWidth: '4%'
-                                        }
                                     },
                                     {
-                                        dataField: 'uuid',
-                                        text: 'Distribution ID',
+                                        dataField: 'season',
+                                        text: 'Season',
                                         hidden: false,
                                         classes: 'col-md-2 col-sm-3 col-auto',
                                         sort: true,
@@ -132,7 +134,7 @@ class DistributionList extends Component {
                                     },
                                     {
                                         dataField: 'created_at',
-                                        text: 'Created',
+                                        text: 'Created At',
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
@@ -142,7 +144,7 @@ class DistributionList extends Component {
                                         isDummyField: true,
                                         classes: 'col-md-2 col-sm-3 col-auto',
                                         headerClasses: 'col-md-2 col-sm-2 col-auto',
-                                        text: '',
+                                        text: 'Actions',
                                         hidden: false,
                                         formatter: this.actionButtons
                                     },

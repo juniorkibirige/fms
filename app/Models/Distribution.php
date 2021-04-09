@@ -21,7 +21,6 @@ class Distribution extends Model
         'distributed_on',
         'office_id',
         'delivered_by',
-        'distribution_input_id'
     ];
 
     /* --------------------------------------------------------------- */
