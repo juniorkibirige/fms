@@ -10,7 +10,6 @@ class Distribution extends Model
 {
 
     protected $table = 'distributions';
-    protected $guarded = ['id'];
     protected $dates = [
         'distributed_on'
     ];
@@ -42,7 +41,7 @@ class Distribution extends Model
         return $this->belongsToMany(
             Input::class,
             'distribution_input',
-            'id'
+            'distribution_id'
         )->withPivot([
             'quantity',
             'assessed_qty',

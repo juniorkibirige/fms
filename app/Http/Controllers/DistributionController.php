@@ -6,6 +6,8 @@ use App\Http\Requests\DistributionRequest;
 use App\Models\Beneficiary;
 use App\Models\Distribution;
 use App\Models\Office;
+use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 
 class DistributionController extends Controller
@@ -21,9 +23,12 @@ class DistributionController extends Controller
         $dis = [];
         $i = 0;
         foreach ($distributions as $distribution) {
-            $distribution->office = Office::find($distribution->id)->name;
+            $distribution->office = Office::find($distribution->id)->name. ' Office';
             $distribution->beneficiary = Beneficiary::find($distribution->beneficiary_id)->name;
+            $distribution->date_of_distribution = explode(' ', $distribution->distributed_on)[0];
+            $distribution->supplier = Supplier::find($distribution->delivered_by)->name;
             $dis[$i++] = $distribution;
+
         }
 
         $res = ['distributions' => $dis];
@@ -39,14 +44,25 @@ class DistributionController extends Controller
      */
     public function store(DistributionRequest $request): Response
     {
-        $res[] = $request->all();
+        $res = [];
+        $d = $request['distribution_data'];
+        $ins = $request['inputs.inputs'];
+        $inputs = [];
+        $dist = Distribution::create($d);
+        for ($i = 0; $i < count($ins); $i++) {
+            $input = $ins[$i];
+            $input['distribution_id'] = $dist->id;
+            $inputs[$i] = $input;
+        }
+        $dist->inputs()->sync($inputs, false);
+        $res = ['distribution'=>$dist, 'inputs'=>$dist->inputs()];
         return \response($res, 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function show(int $id): Response
@@ -69,7 +85,7 @@ class DistributionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function destroy(int $id): Response

@@ -3,8 +3,6 @@ import TextInput from "../../Fields/TextInput";
 import DropDownInput from "../../Fields/DropDownInput";
 import DateTimePicker from "../../Fields/DateTimePicker";
 import QuantityInput from "../../Fields/QuantityInput";
-import RateInput from "../../Fields/RateInput";
-import TotalInput from "../../Fields/TotalInput";
 import axios from "axios";
 
 const realFields = [
@@ -61,6 +59,7 @@ class DistributionCreate extends Component {
         this.getInputs = this.getInputs.bind(this)
         this.getOffices = this.getOffices.bind(this)
         this.getBeneficiaries = this.getBeneficiaries.bind(this)
+        this.getSuppliers = this.getSuppliers.bind(this)
     }
 
     getDistricts(re) {
@@ -477,6 +476,21 @@ class DistributionCreate extends Component {
         })
     }
 
+    getSuppliers() {
+        let reg = []
+        axios.get('/api/supplier').then(res => {
+            res.data.suppliers.map((v, k) => {
+                let r = {}
+                r['value'] = v.id
+                r['label'] = v.name
+                reg.push(r)
+            });
+        });
+        this.setState({
+            suppliers: reg,
+        })
+    }
+
     componentDidMount() {
         let errs = {}
         realFields.map((v) => {
@@ -489,6 +503,7 @@ class DistributionCreate extends Component {
         this.getInputs()
         this.getOffices()
         this.getBeneficiaries()
+        this.getSuppliers()
     }
 
     render() {
@@ -578,15 +593,17 @@ class DistributionCreate extends Component {
                                             options={this.state.beneficiaries}
                                             error={this.state.errors['beneficiary_id']}
                                         />
-                                        <TextInput
-                                            class={'col-sm-12 required'}
+                                        <DropDownInput
+                                            class={'col-md-8 required'}
                                             label={'Delivered By'}
                                             required={true}
                                             field={'delivered_by'}
                                             placeholder={'Delivered By'}
-                                            onChange={this.handleFieldChange}
+                                            onChange={this.handleOfficeFieldChange}
                                             value={this.state.delivered_by}
                                             error={this.state.errors['delivered_by']}
+                                            clearable={true}
+                                            options={this.state.suppliers}
                                         />
                                     </div>
                                 </div>
