@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Auth;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Str;
 
@@ -38,11 +35,11 @@ class AuthController extends Controller
         ]);
 
         $user->save();
-        $token = $user->createToken('Personal Access Token');
+        $token = $user->createToken($user->email . ' Password Grant Client');
         $token->token->expires_at = Carbon::now()->addWeeks(1);
         $affected = DB::table('users')
             ->where('id', $user->id)
-            ->update(['api_token' => substr($token->accessToken, 0, 80), 'expires_at' => $token->expires_at]);
+            ->update(['api_token' => substr($token->accessToken, 10, 768), 'expires_at' => $token->expires_at]);
         $token->save();
 
         return response()->json([
@@ -51,7 +48,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'access_token' => $token->accessToken,
-            'api_token' => substr($token->accessToken, 0, 80),
+            'api_token' => substr($token->accessToken, 10, 768),
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
                 $token->token->expires_at
@@ -83,13 +80,13 @@ class AuthController extends Controller
 
         $user = $request->user();
 
-        $tokenResult = $user->createToken('Personal Access Token');
+        $tokenResult = $user->createToken($user->email . ' Password Grant Client');
         $token = $tokenResult->token;
         if ($request->remember_me)
             $token->expires_at = Carbon::now()->addWeeks(1);
         $affected = DB::table('users')
-                        ->where('id', $user->id)
-                        ->update(['api_token' => substr($tokenResult->accessToken, 0, 80), 'expires_at' => $token->expires_at]);
+            ->where('id', $user->id)
+            ->update(['api_token' => substr($tokenResult->accessToken, 10, 768), 'expires_at' => $token->expires_at]);
         $token->save();
         return response()->json([
             'success' => true,
@@ -97,7 +94,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'access_token' => $tokenResult->accessToken,
-            'api_token' => substr($tokenResult->accessToken, 0, 80),
+            'api_token' => substr($tokenResult->accessToken, 10, 768),
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
@@ -109,18 +106,20 @@ class AuthController extends Controller
      * Logout user (Revoke the token)
      *
      * @param Request $request
-     * @return false|Application|RedirectResponse|Redirector|string
+     * @return false|string
      */
     public function logout(Request $request)
     {
+        $request->user()->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
+
+        return \response([], 200);
+    }
+
+    public function logout_internal(Request $request)
+    {
         Auth::logout();
-        Auth::guard()->logout();
-        if(Auth::check()) {
-            $r = [];
-            $r['login'] = true;
-            $r['user'] = Auth::user();
-            return json_encode($r);
-        }
         return redirect('/');
     }
 

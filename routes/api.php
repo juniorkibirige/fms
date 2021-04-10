@@ -20,7 +20,8 @@ Route::resource('offices', 'OfficesController')->except([
 ]);
 Route::post('login', ['as'=>'login', 'uses' => 'Auth\AuthController@login'])->name('login.api');
  Route::post('/register', 'Auth\AuthController@register')->name('register.api');
-Route::post('/logout', 'Auth\AuthController@logout')->name('logout.api');
+Route::post('/logout', 'Auth\AuthController@logout')->name('logout.api')->middleware('auth:api', 'cors', 'json.response');
+Route::post('/logout_internal', 'Auth\AuthController@logout_internal')->name('logout_internal.api');
 Route::group(['middleware' => ['auth:api', 'cors', 'json.response']], function () {
     Route::resource('supplier', 'SupplierController')->except([
         'edit', 'create'

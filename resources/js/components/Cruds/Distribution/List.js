@@ -126,7 +126,6 @@ class DistributionList extends Component {
                                         dataField: 'id',
                                         text: 'ID',
                                         hidden: false,
-                                        headerClasses: `col-1`,
                                     },
                                     {
                                         dataField: 'season',

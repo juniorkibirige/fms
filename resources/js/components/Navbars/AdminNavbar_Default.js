@@ -23,7 +23,6 @@ import {
     Container,
     DropdownItem,
     DropdownMenu,
-    DropdownToggle,
     Form,
     FormGroup,
     Input,
@@ -83,7 +82,7 @@ class AdminNavbar extends React.Component {
                         </UncontrolledDropdown>
                         <Nav className="align-items-center ml-auto ml-md-0 d-md-flex" navbar>
                             <UncontrolledDropdown nav>
-                                <DropdownToggle className="pr-0" nav>
+                                <div className="pr-0" nav style={{cursor: 'pointer'}}>
                                     <Media className="align-items-center text-black" onClick={this.props.logOut}>
                     <span>
                       <i className="fa fa-angle-left"></i>
@@ -94,7 +93,7 @@ class AdminNavbar extends React.Component {
                       </span>
                                         </Media>
                                     </Media>
-                                </DropdownToggle>
+                                </div>
                                 <DropdownMenu className="dropdown-menu-arrow" right>
                                     <DropdownItem className="noti-title" header tag="div">
                                         <h6 className="text-overflow m-0">Welcome!</h6>
@@ -116,7 +115,7 @@ class AdminNavbar extends React.Component {
                                         <span>Support</span>
                                     </DropdownItem>
                                     <DropdownItem divider/>
-                                    <DropdownItem href="#logout" onClick={this.props.logOut}>
+                                    <DropdownItem href="#logout">
                                         <i className="ni ni-user-run"/>
                                         <span>Logout</span>
                                     </DropdownItem>

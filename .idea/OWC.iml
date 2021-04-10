@@ -134,6 +134,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/shrikeh/teapot" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/teapot/status-code" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cloudinary-labs/cloudinary-laravel" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/dbal" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/event-manager" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

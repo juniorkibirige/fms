@@ -129,6 +129,9 @@
       <path value="$PROJECT_DIR$/vendor/shrikeh/teapot" />
       <path value="$PROJECT_DIR$/vendor/teapot/status-code" />
       <path value="$PROJECT_DIR$/vendor/cloudinary-labs/cloudinary-laravel" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3">

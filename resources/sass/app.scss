@@ -117,6 +117,12 @@ button.disabled:not(:disabled), button.disabled, button.disabled:disabled, butto
     }
 }
 
+@media (max-width: 767.98px) {
+    .navbar-collapse.collapsing, .navbar-collapse.show {
+        background: rgba(68, 89, 107, 92%) !important;
+    }
+}
+
 @include media-breakpoint-only(xs) {
     .navbar-collapse {
         margin-right: 0.7rem !important;

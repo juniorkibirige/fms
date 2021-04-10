@@ -151,7 +151,6 @@ class InputsList extends Component {
                                         dataField: 'id',
                                         text: 'ID',
                                         hidden: false,
-                                        classes: 'col-1'
                                     },
                                     {
                                         dataField: 'name',
