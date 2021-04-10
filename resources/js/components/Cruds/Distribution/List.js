@@ -24,10 +24,6 @@ class DistributionList extends Component {
         this.handleActionButtons = this.handleActionButtons.bind(this)
     }
 
-    refreshData(){
-
-    }
-
     handleActionButtons(row) {
         const id = row.id;
         const action = event.target.textContent.toLowerCase()
@@ -94,6 +90,20 @@ class DistributionList extends Component {
         });
     }
 
+    refreshData() {
+        this.setState({
+            refreshing: true
+        })
+        axios.get('/api/distributions').then(response => {
+            setTimeout(() => {
+                this.setState({
+                    distributions: response.data.distributions,
+                    refreshing: false
+                });
+            }, 2000)
+        });
+    }
+
     render() {
         return (
             <>
@@ -126,17 +136,31 @@ class DistributionList extends Component {
                                         sort: true,
                                     },
                                     {
-                                        dataField: 'phone',
-                                        text: 'Details',
+                                        dataField: 'beneficiary',
+                                        text: 'Beneficiary',
                                         hidden: false,
                                         classes: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
                                         headerClasses: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
                                     },
                                     {
-                                        dataField: 'created_at',
-                                        text: 'Created At',
+                                        dataField: 'supplier',
+                                        text: 'Supplied By',
                                         hidden: false,
-                                        classes: 'col-md-2 d-md-table-cell d-none',
+                                        classes: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                        headerClasses: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                    },
+                                    {
+                                        dataField: 'office',
+                                        text: 'Office',
+                                        hidden: false,
+                                        classes: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                        headerClasses: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                    },
+                                    {
+                                        dataField: 'date_of_distribution',
+                                        text: 'Date of Distribution',
+                                        hidden: false,
+                                        classes: 'col-md-2 d-md-table-cell d-none text-center',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
                                     },
                                     {
