@@ -30,7 +30,7 @@ class DistributionRequest extends FormRequest
             'distribution_data.status' => 'required',
             'distribution_data.office_id' => 'required|numeric',
             'distribution_data.beneficiary_id' => 'required|numeric',
-            'distribution_data.delivered_by' => 'required|string',
+            'distribution_data.delivered_by' => 'required|numeric',
             'inputs.inputs' => 'required'
         ];
     }
