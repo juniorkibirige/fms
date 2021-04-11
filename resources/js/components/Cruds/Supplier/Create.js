@@ -472,7 +472,7 @@ class SupplierCreate extends Component {
 
             await axios.post('/api/supplier', form)
                 .then(response => {
-                    location.href = location.origin + '/dashboard/supplier/list'
+                    this.props.history.push('/dashboard/supplier/list')
                 })
                 .catch(error => {
                     // console.warn(error.response.data.errors)

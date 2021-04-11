@@ -415,6 +415,7 @@ class DistributionCreate extends Component {
             await axios.post('/api/distributions', form)
                 .then(response => {
                     console.log(response)
+                    this.props.history.push('/dashboard/distribution/list')
                     // location.href = location.origin + '/dashboard/distribution/list'
                 })
                 .catch(error => {

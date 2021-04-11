@@ -137,7 +137,7 @@ class InputsCreate extends Component {
 
             await axios.post('/api/input', form)
                 .then(response => {
-                    location.href = location.origin + '/dashboard/inputs/list'
+                    this.props.history.push('/dashboard/inputs/list')
                 })
                 .catch(error => {
                     // console.warn(error.response.data.errors)
