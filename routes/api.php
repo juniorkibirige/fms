@@ -33,4 +33,6 @@ Route::group(['middleware' => ['auth:api', 'cors', 'json.response']], function (
     Route::resource('distributions', 'DistributionController')->except([
         'edit', 'create'
     ]);
+    Route::get('/data/counters', 'DashboardController@counters')->name('dashboard.counters');
+    Route::get('/authed',['as' => 'authed', 'uses' => 'Auth\AuthController@isAuthed'])->name('authed.api');
 });
