@@ -19,3 +19,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+<FilesMatch ".(eot|otf|ttf|woff)">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
