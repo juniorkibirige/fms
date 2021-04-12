@@ -21,8 +21,6 @@ import classnames from "classnames";
 // reactstrap components
 import {
     Container,
-    DropdownItem,
-    DropdownMenu,
     Form,
     FormGroup,
     Input,
@@ -37,6 +35,27 @@ import {
 } from "reactstrap";
 
 class AdminNavbar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.checkAuth = this.checkAuth.bind(this)
+    }
+
+    checkAuth() {
+        axios.get('/api/authed')
+            .then((value) => {
+                if(value.data.status !== true) {
+                    this.props.logOut()
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    componentDidMount() {
+        this.checkAuth()
+    }
+
     render() {
         return (
             <>
@@ -81,46 +100,18 @@ class AdminNavbar extends React.Component {
                             </NavItem>
                         </UncontrolledDropdown>
                         <Nav className="align-items-center ml-auto ml-md-0 d-md-flex" navbar>
-                            <UncontrolledDropdown nav>
-                                <div className="pr-0" nav style={{cursor: 'pointer'}}>
-                                    <Media className="align-items-center text-black" onClick={this.props.logOut}>
-                    <span>
-                      <i className="fa fa-angle-left"></i>
-                    </span>
-                                        <Media className="ml-2 d-lg-block">
-                      <span className="mb-0 text-sm text-black font-weight-bold">
-                        LOG OUT
-                      </span>
-                                        </Media>
+                            <div className="pr-0" nav style={{cursor: 'pointer'}}>
+                                <Media className="align-items-center text-black" onClick={this.props.logOut}>
+                                    <span>
+                                      <i className="fa fa-angle-left"/>
+                                    </span>
+                                    <Media className="ml-2 d-lg-block">
+                                    <span className="mb-0 text-sm text-black font-weight-bold">
+                                      LOG OUT
+                                    </span>
                                     </Media>
-                                </div>
-                                <DropdownMenu className="dropdown-menu-arrow" right>
-                                    <DropdownItem className="noti-title" header tag="div">
-                                        <h6 className="text-overflow m-0">Welcome!</h6>
-                                    </DropdownItem>
-                                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                                        <i className="ni ni-single-02"/>
-                                        <span>My profile</span>
-                                    </DropdownItem>
-                                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                                        <i className="ni ni-settings-gear-65"/>
-                                        <span>Settings</span>
-                                    </DropdownItem>
-                                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                                        <i className="ni ni-calendar-grid-58"/>
-                                        <span>Activity</span>
-                                    </DropdownItem>
-                                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                                        <i className="ni ni-support-16"/>
-                                        <span>Support</span>
-                                    </DropdownItem>
-                                    <DropdownItem divider/>
-                                    <DropdownItem href="#logout">
-                                        <i className="ni ni-user-run"/>
-                                        <span>Logout</span>
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
+                                </Media>
+                            </div>
                         </Nav>
                     </Container>
                 </Navbar>

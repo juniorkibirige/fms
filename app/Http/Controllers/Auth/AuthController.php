@@ -56,7 +56,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-
     /**
      * Login user and create token
      *
@@ -113,6 +112,11 @@ class AuthController extends Controller
         $request->user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
+        $user = $request->user();
+        $user->api_token = null;
+        DB::table('users')
+            ->where(['id' => $user->id])
+            ->update(['api_token' => null]);
 
         return \response([], 200);
     }
@@ -132,5 +136,28 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         return response()->json($request->user());
+    }
+
+    /**
+     * Check the authentication
+     *
+     * @param Request $request
+     * @return JsonResponse [json] user object
+     */
+    public function isAuthed(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if ($user->id === null) {
+            return response()->json(['status' => false]);
+        } else {
+            $tokens = DB::table('oauth_access_tokens')
+                ->where(['user_id' => $user->id])
+                ->get();
+            if (count($tokens) > 0) {
+                return response()->json(['status' => true]);
+            } else {
+                return response()->json(['status' => false]);
+            }
+        }
     }
 }
