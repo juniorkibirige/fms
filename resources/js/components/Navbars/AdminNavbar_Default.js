@@ -43,12 +43,16 @@ class AdminNavbar extends React.Component {
     checkAuth() {
         axios.get('/api/authed')
             .then((value) => {
-                if(value.data.status !== true) {
-                    this.props.logOut()
-                }
-            })
+                    if (value.data.status !== true) {
+                        this.props.logOut()
+                    }
+                },
+                (err) => {
+                    console.log("Error: ")
+                })
             .catch((err) => {
-                console.log(err)
+                console.log("Error: ")
+                // console.log(err)
             })
     }
 
@@ -100,7 +104,7 @@ class AdminNavbar extends React.Component {
                             </NavItem>
                         </UncontrolledDropdown>
                         <Nav className="align-items-center ml-auto ml-md-0 d-md-flex" navbar>
-                            <div className="pr-0" nav style={{cursor: 'pointer'}}>
+                            <div className="pr-0" style={{cursor: 'pointer'}}>
                                 <Media className="align-items-center text-black" onClick={this.props.logOut}>
                                     <span>
                                       <i className="fa fa-angle-left"/>

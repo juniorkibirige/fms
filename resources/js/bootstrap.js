@@ -22,6 +22,20 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    if (401 === error.response.status) {
+        let appState = {
+            isLoggedIn: false,
+            user: {}
+        }
+        localStorage['appState'] = JSON.stringify(appState)
+        location.href = location.origin + '/'
+    } else {
+        return Promise.reject(error);
+    }
+});
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
 

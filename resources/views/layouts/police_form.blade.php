@@ -38,7 +38,7 @@
             <div class="tt-object object_one"></div>
         </div>
     </div>
-    <div id="loading-text">Setting up environment</div>
+    <div id="loading-text">Loading ...</div>
 </div>
 <div id="root"></div>
 <img rel="prefetch" src="{{asset('/assets/img/theme/spinner.gif') }}" alt="img" class="d-none">
