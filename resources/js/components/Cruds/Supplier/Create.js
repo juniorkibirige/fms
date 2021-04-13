@@ -801,7 +801,7 @@ class SupplierCreate extends Component {
     getInputs() {
         let reg = []
         axios.get('/api/input').then(res => {
-            res.data.map((v, k) => {
+            res.data.inputs.map((v, k) => {
                 let r = {}
                 r['value'] = v.id
                 r['label'] = v.name

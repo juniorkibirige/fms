@@ -88,7 +88,7 @@ class Stats extends Component {
                 ]
                 // }]
             },
-            OffenceChart: {
+            byGenderChart: {
                 chart: {
                     plotBackground: null,
                     plotBorderWidth: null,
@@ -96,7 +96,7 @@ class Stats extends Component {
                     type: 'pie'
                 },
                 title: {
-                    text: 'Complaints by Offense Type, ' + new Date().getFullYear(),
+                    text: 'Beneficiaries By Gender, ' + new Date().getFullYear(),
                     align: 'center',
                 },
                 tooltip: {
@@ -109,7 +109,7 @@ class Stats extends Component {
                 },
                 xAxis: {
                     accessiblity: {
-                        rangeDescription: 'Reports by Offense Type'
+                        rangeDescription: 'Beneficiaries by Gender'
                     }
                 },
                 legend: {
@@ -134,13 +134,13 @@ class Stats extends Component {
                 },
                 series: [{
                     type: 'pie',
-                    name: 'Gender Range',
+                    name: 'Gender',
                     colorByPoint: true,
                     data: [
                         {
-                            name: 'Female',
-                            y: 13.29
-                        }
+                            name: 'Empty',
+                            y: 100
+                        },
                     ]
                 }]
             },
@@ -150,10 +150,10 @@ class Stats extends Component {
                     zoomType: 'x'
                 },
                 accessiblity: {
-                    description: 'Number of complaints per day in ' + this.getMonth(new Date().getMonth())
+                    description: 'Number of Distributions per day in ' + this.getMonth(new Date().getMonth())
                 },
                 title: {
-                    text: 'Complaints in ' + this.getMonth(new Date().getMonth()) + ', ' + new Date().getFullYear()
+                    text: 'Distributions in ' + this.getMonth(new Date().getMonth()) + ', ' + new Date().getFullYear()
                 },
                 subtitle: {
                     text: 'Source: Data collected over the month by the system'
@@ -174,7 +174,7 @@ class Stats extends Component {
                 },
                 yAxis: {
                     title: {
-                        text: 'Number of Crimes'
+                        text: 'Number of Distributions'
                     },
                     labels: {
                         formatter: function () {
@@ -183,7 +183,7 @@ class Stats extends Component {
                     }
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>{point.y:,.0f} crimes</b> on ' + this.getMonth(new Date().getMonth()) + ', {point.x}.'
+                    pointFormat: '{series.name}: <b>{point.y:,.0f} distributed</b> on ' + this.getMonth(new Date().getMonth()) + ', {point.x}.'
                 },
                 plotOptions: {
                     series: {
@@ -224,6 +224,8 @@ class Stats extends Component {
         this.aC = null
         this.gC = null
         this.getCounters = this.getCounters.bind(this)
+        this.getGenderData = this.getGenderData.bind(this)
+        this.getDistributionData = this.getDistributionData.bind(this)
         document.title = document.title.split(':')[0]
     }
 
@@ -239,6 +241,24 @@ class Stats extends Component {
             })
     }
 
+    async getGenderData() {
+        await axios.get('/api/data/gender')
+            .then(value => {
+                this.setState({
+                    byGender: value.data.beneficiaries,
+                })
+            })
+    }
+
+    async getDistributionData() {
+        await axios.get('/api/data/distribution')
+            .then(value => {
+                this.setState({
+                    distMonth: value.data.distributions,
+                })
+            })
+    }
+
     getMonth(month) {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -246,9 +266,11 @@ class Stats extends Component {
         return months[month].toString()
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         history.pushState({}, null, location.origin + '/dashboard')
-        this.getCounters()
+        await this.getCounters()
+        await this.getGenderData()
+        await this.getDistributionData()
         addFunnel(HighCharts)
         HighCharts.theme = {
             colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
@@ -455,12 +477,21 @@ class Stats extends Component {
                 trackBorderColor: '#404043'
             }
         };
-        HighCharts.setOptions(HighCharts.theme)
-        // this.fM = HighCharts.chart('forMonth', this.state.forMonth)
-        // this.aC = HighCharts.chart('chart', this.state.RankChart)
-        // this.gC = HighCharts.chart('chart3', this.state.OffenceChart)
-        let s = this.state.OffenceChart.series[0].data;
-        s = []
+        // HighCharts.setOptions(HighCharts.theme)
+        this.fM = HighCharts.chart('forMonth', this.state.forMonth)
+        this.aC = HighCharts.chart('chart', this.state.RankChart)
+        this.gC = HighCharts.chart('chart3', this.state.byGenderChart)
+        for (const key in this.state.byGender) {
+            if (this.state.byGender.hasOwnProperty(key)) {
+                const gender = this.state.byGender[key];
+                let newPoint = {
+                    name: key,
+                    y: gender
+                }
+                this.gC.series[0].addPoint(newPoint)
+            }
+        }
+        this.gC.series[0].data[0].remove(true)
         axios.get('/api/form_105').then(response => {
             // Setting up regional chart
             for (const key in response.data.byRegion) {
@@ -470,39 +501,10 @@ class Stats extends Component {
                         name: key.toString(),
                         data: Object.keys(region).map(key => region[key])
                     })
-                    // this.fM.addSeries(newSeries, false)
-                    // this.fM.redraw()
+                    this.fM.addSeries(newSeries, false)
+                    this.fM.redraw()
                 }
             }
-            // Setting up gender pie chart
-            for (const key in response.data.byGender) {
-                if (response.data.byGender.hasOwnProperty(key)) {
-                    const gender = response.data.byGender[key];
-                    let newPoint = {
-                        name: key,
-                        y: gender
-                    }
-                    // this.gC.series[0].addPoint(newPoint)
-                }
-            }
-            // this.gC.series[0].data[0].remove(true)
-
-            //Setting up age chart
-            // this.aC.update({
-            //     series: [
-            //         {
-            //             data: response.data.byRank
-            //         }
-            //     ]
-            // }, true, true)
-            //
-            // this.aC.redraw()
-            this.setState(prevState => ({
-                ...prevState,
-                perMonth: response.data.perMonth,
-                perWeek: response.data.perWeek,
-                perDay: response.data.perDay
-            }))
         })
     }
 
@@ -553,7 +555,7 @@ class Stats extends Component {
                             <div className="col-sm-6 col-md-3">
                                 <div className="card">
                                     <div className="card-body p-3 d-flex align-items-center">
-                                        <i className="la la-university bg-primary p-3 font-2xl mr-3">
+                                        <i className="fa fa-cubes bg-primary p-3 font-2xl mr-3">
 
                                         </i>
                                         <div>
@@ -587,78 +589,12 @@ class Stats extends Component {
                             </div>
 
                         </div>
-
-                        <Row className={"d-none"}>
-                            <Col className='col-xl-4 col-md-4 col-12'>
-                                <Card className='card-stats bg-gradient-purple' style={{marginBottom: 30 + 'px'}}>
-                                    <CardBody>
-                                        <Row>
-                                            <Col>
-                                                <h5 className='card-title text-uppercase text-muted mb-0 text-white'>Total
-                                                    Complaints</h5>
-                                                <span
-                                                    className='h2 font-weight-bold mb-0 text-white'>{this.state.perDay}&nbsp;
-                                                    <span className='text-nowrap text-sm'>Today</span></span>
-                                            </Col>
-                                            <Col className='col-auto'>
-                                                <div
-                                                    className='icon icon-shape bg-gradient-blue text-white rounded-circle shadow'>
-                                                    <i className='ni ni-chart-pie-35'></i>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                            <Col className='col-xl-4 col-md-4 col-12'>
-                                <Card className='card-stats bg-gradient-blue' style={{marginBottom: 30 + 'px'}}>
-                                    <CardBody>
-                                        <Row>
-                                            <Col>
-                                                <h5 className='card-title text-uppercase text-muted mb-0 text-white'>Total
-                                                    Complaints</h5>
-                                                <span
-                                                    className='h2 font-weight-bold mb-0 text-white'>{this.state.perWeek}&nbsp;
-                                                    <span className='text-nowrap text-sm'>This Week</span></span>
-                                            </Col>
-                                            <Col className='col-auto'>
-                                                <div
-                                                    className='icon icon-shape bg-gradient-red text-white rounded-circle shadow'>
-                                                    <i className='ni ni-chart-pie-35'></i>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                            <Col className='col-xl-4 col-md-4 col-12'>
-                                <Card className='card-stats bg-gradient-red' style={{marginBottom: 30 + 'px'}}>
-                                    <CardBody>
-                                        <Row>
-                                            <Col>
-                                                <h5 className='card-title text-uppercase text-muted mb-0 text-white'>Total
-                                                    Complaints</h5>
-                                                <span
-                                                    className='h2 font-weight-bold mb-0 text-white'>{this.state.perMonth}&nbsp;
-                                                    <span className='text-nowrap text-sm'>This Month</span></span>
-                                            </Col>
-                                            <Col className='col-auto'>
-                                                <div
-                                                    className='icon icon-shape bg-gradient-blue text-white rounded-circle shadow'>
-                                                    <i className='ni ni-chart-pie-35'></i>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row className='pb-4 d-none'>
-                            <div id="forMonth" className='col-sm-12 col-md-12 col-12'
+                        <Row className='pb-4'>
+                            <div id="forMonth" className='d-none col-sm-12 col-md-12 col-12'
                                  style={{borderRadius: `10px`}}/>
                         </Row>
-                        <Row className={"d-none"}>
-                            <div id="chart" className='pb-4 col-sm-12 col-md-6 col-12'
+                        <Row className={""}>
+                            <div id="chart" className='d-none pb-4 col-sm-12 col-md-6 col-12'
                                  style={{borderRadius: `10px`}}/>
                             <div id="chart3" className='pb-4 col-sm-12 col-md-6 col-12'
                                  style={{borderRadius: `10px`}}/>
