@@ -34,5 +34,7 @@ Route::group(['middleware' => ['auth:api', 'cors', 'json.response']], function (
         'edit', 'create'
     ]);
     Route::get('/data/counters', 'DashboardController@counters')->name('dashboard.counters');
+    Route::get('/data/gender', 'DashboardController@byGender')->name('dashboard.gender');
+    Route::get('/data/distribution', 'DashboardController@byMonth')->name('dashboard.distribution');
     Route::get('/authed',['as' => 'authed', 'uses' => 'Auth\AuthController@isAuthed'])->name('authed.api');
 });
