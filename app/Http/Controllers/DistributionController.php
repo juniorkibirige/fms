@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DistributionRequest;
 use App\Models\Beneficiary;
 use App\Models\Distribution;
+use App\Models\Input;
 use App\Models\Office;
 use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class DistributionController extends Controller
 {
@@ -23,10 +25,20 @@ class DistributionController extends Controller
         $dis = [];
         $i = 0;
         foreach ($distributions as $distribution) {
-            $distribution->office = Office::find($distribution->id)->name. ' Office';
+            $distribution->office = Office::find($distribution->id)->name;
             $distribution->beneficiary = Beneficiary::find($distribution->beneficiary_id)->name;
             $distribution->date_of_distribution = explode(' ', $distribution->distributed_on)[0];
             $distribution->supplier = Supplier::find($distribution->delivered_by)->name;
+            $inputs = DB::table('distribution_input')
+                ->where(['distribution_id' => $distribution->id])
+                ->get(['input_id', 'quantity']);
+            $is = [];
+            $it = 0;
+            foreach ($inputs as $input) {
+                $input->name = Input::find($input->input_id)->name;
+                $is[$it++] = '('.$input->name.', '.$input->quantity.'),';
+            }
+            $distribution->inputs = $is;
             $dis[$i++] = $distribution;
 
         }

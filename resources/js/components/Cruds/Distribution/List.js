@@ -21,6 +21,7 @@ class DistributionList extends Component {
         document.title = document.title.split(':')[0] + " : Distribution Logs"
         this.refreshData = this.refreshData.bind(this)
         this.actionButtons = this.actionButtons.bind(this)
+        this.inputsFormat = this.inputsFormat.bind(this)
         this.handleActionButtons = this.handleActionButtons.bind(this)
     }
 
@@ -80,6 +81,12 @@ class DistributionList extends Component {
                 />
             </>
         )
+    }
+
+    inputsFormat(cell, row) {
+        return <pre>
+            {row.inputs.join('\n')}
+        </pre>
     }
 
     componentDidMount() {
@@ -149,6 +156,17 @@ class DistributionList extends Component {
                                         headerClasses: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
                                     },
                                     {
+                                        dataField: 'inputs',
+                                        text: 'Input, Qty',
+                                        hidden: false,
+                                        classes: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                        headerClasses: 'col-md-2 col-sm-3 d-md-table-cell d-sm-table-cell d-none',
+                                        // style: {
+                                        //     height: '15px'
+                                        // },
+                                        formatter: this.inputsFormat
+                                    },
+                                    {
                                         dataField: 'office',
                                         text: 'Office',
                                         hidden: false,
@@ -157,7 +175,7 @@ class DistributionList extends Component {
                                     },
                                     {
                                         dataField: 'date_of_distribution',
-                                        text: 'Date of Distribution',
+                                        text: 'Dist. Date',
                                         hidden: false,
                                         classes: 'col-md-2 d-md-table-cell d-none text-center',
                                         headerClasses: 'col-md-2 d-md-table-cell d-none',
