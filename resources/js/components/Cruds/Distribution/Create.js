@@ -550,7 +550,7 @@ class DistributionCreate extends Component {
                                             error={this.state.errors['season']}
                                         />
                                         <DateTimePicker
-                                            class={'col-sm-6 required'}
+                                            class={'col-md-6 col-sm-12 required'}
                                             label={'Distributed On'}
                                             required={true}
                                             id={'distributed_on'}
