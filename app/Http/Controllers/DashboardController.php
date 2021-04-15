@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beneficiary;
+use App\Models\Constituency;
 use App\Models\Distribution;
+use App\Models\District;
 use App\Models\Input;
+use App\Models\Parishes;
+use App\Models\Region;
 use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -40,7 +44,6 @@ class DashboardController extends Controller
         $beneficiaries = [
             'Male' => 0,
             'Female' => 0,
-            'Other' => 0,
         ];
         $bens = Beneficiary::get();
 
@@ -71,18 +74,25 @@ class DashboardController extends Controller
         $data = [];
         $d = Distribution::orderBy('created_at', 'desc')
             ->get();
-//        foreach ($d as $dat) {
-//            $inps = DB::table('distribution_input')
-//                ->where(['distribution_id' => $dat->id])
-//                ->get(['input_id', 'quantity']);
-//            $is = [];
-//            $it = 0;
-//            foreach ($inps as $input) {
-//                $input->name = Input::find($input->input_id)->name;
-//                $is[$it++] = $input;
-//            }
-//            $dat->inputs = $is;
-//        }
+        $index = 0;
+        foreach ($d as $dat) {
+            $inps = DB::table('distribution_input')
+                ->where(['distribution_id' => $dat->id])
+                ->get(['input_id', 'quantity']);
+            $is = [];
+            $it = 0;
+            foreach ($inps as $input) {
+                $input->name = Input::find($input->input_id)->name;
+                $is[$it++] = $input;
+            }
+            $dat->inputs = $is;
+            $dat->beneficiary = Beneficiary::find($dat->beneficiary_id);
+            $dat->beneficiary->region = Region::find($dat->beneficiary->region_id)->name;
+            $dat->beneficiary->district = District::find($dat->beneficiary->district_id)->name;
+            $dat->beneficiary->county = Constituency::find($dat->beneficiary->county_id)->name;
+            $dat->beneficiary->parish = Parishes::find($dat->beneficiary->parish_id)->name;
+            $data[$index++] = $dat;
+        }
         $month = explode('-', date('d-m-Y'))[1];
         $day = explode('-', date('d-m-Y'))[0];
         $week = [];
@@ -117,13 +127,13 @@ class DashboardController extends Controller
         foreach ($data as $formData) { // Getting perMonthPerDay for Graph by
             if (isset($sort['None']))
                 $sort = [];
-            if (!isset($sort[$formData->district])) {
-                $sort[$formData->district] = null;
+            if (!isset($sort[$formData->beneficiary->district])) {
+                $sort[$formData->beneficiary->district] = null;
                 for ($it = 0; $it <= $dMonth[intval($month)]; $it++) {
                     if ($it == 0) {
-                        $sort[$formData->district][$it] = 0;
+                        $sort[$formData->beneficiary->district][$it] = 0;
                     } else {
-                        $sort[$formData->district][$it] = null;
+                        $sort[$formData->beneficiary->district][$it] = null;
                     }
                 }
             }
@@ -131,7 +141,7 @@ class DashboardController extends Controller
             $ret['id'] = $formData->id;
             $ret['refNo'] = $formData->refNo;
             $ret['victimName'] = $formData->fName . " " . $formData->mName;
-            $ret['district'] = $formData->district;
+            $ret['district'] = $formData->beneficiary->district;
             $ret['nin'] = $formData->nin;
             $ret['contact'] = $formData->pref_mode === 'email' ? $formData->email : $formData->tel;
             $ret['incidentType'] = $formData->incidentType;
@@ -149,8 +159,8 @@ class DashboardController extends Controller
             $cm = explode('-', $date)[1];
             $cd = explode('-', $date)[2];
             if ($cm == $month) {
-                if (($prev === '') || ($prev !== $formData->district)) {
-                    $prev = $formData->district;
+                if (($prev === '') || ($prev !== $formData->beneficiary->district)) {
+                    $prev = $formData->beneficiary->district;
                     for ($it = 1; $it <= $dMonth[intval($month)]; $it++) {
                         if ($sort[$prev][$it] == NULL) {
                             $sort[$prev][$it] = 0;
@@ -175,7 +185,7 @@ class DashboardController extends Controller
         }
 
         return response()->json([
-            'distributions' => $chartData
+            'distributions' => $sort
         ]);
 
     }

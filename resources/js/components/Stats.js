@@ -491,21 +491,18 @@ class Stats extends Component {
                 this.gC.series[0].addPoint(newPoint)
             }
         }
-        this.gC.series[0].data[0].remove(true)
-        axios.get('/api/form_105').then(response => {
-            // Setting up regional chart
-            for (const key in response.data.byRegion) {
-                if (response.data.byRegion.hasOwnProperty(key)) {
-                    const region = response.data.byRegion[key];
-                    let newSeries = new Object({
-                        name: key.toString(),
-                        data: Object.keys(region).map(key => region[key])
-                    })
-                    this.fM.addSeries(newSeries, false)
-                    this.fM.redraw()
-                }
+        for (const key in this.state.distMonth) {
+            if (this.state.distMonth.hasOwnProperty(key)) {
+                const region = this.state.distMonth[key];
+                let newSeries = new Object({
+                    name: key.toString(),
+                    data: Object.keys(region).map(key => region[key])
+                })
+                this.fM.addSeries(newSeries, false)
+                this.fM.redraw()
             }
-        })
+        }
+        this.gC.series[0].data[0].remove(true)
     }
 
     render() {
@@ -590,7 +587,7 @@ class Stats extends Component {
 
                         </div>
                         <Row className='pb-4'>
-                            <div id="forMonth" className='d-none col-sm-12 col-md-12 col-12'
+                            <div id="forMonth" className='col-sm-12 col-md-12 col-12'
                                  style={{borderRadius: `10px`}}/>
                         </Row>
                         <Row className={""}>
