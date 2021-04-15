@@ -537,7 +537,7 @@ class BeneficiaryCreate extends Component {
                                             error={this.state.errors['lName']}
                                         />
                                         <TextInput
-                                            class={'offset-md-2 col-sm-7 required'}
+                                            class={'col-md-8 col-sm-12 required'}
                                             label={'NIN'}
                                             required={true}
                                             field={'nin'}
@@ -547,7 +547,7 @@ class BeneficiaryCreate extends Component {
                                             error={this.state.errors['nin']}
                                         />
                                         <DateTimePicker
-                                            class={'col-sm-6 required'}
+                                            class={'col-md-6 col-sm-12 required'}
                                             label={'Date of Birth'}
                                             required={true}
                                             id={'dob'}
@@ -559,7 +559,7 @@ class BeneficiaryCreate extends Component {
                                             error={this.state.errors['dob']}
                                         />
                                         <DropDownInput
-                                            class={'col-sm-6 required'}
+                                            class={'col-md-6 col-sm-12 required'}
                                             label={'Gender'}
                                             required={true}
                                             field={'gender'}
@@ -576,10 +576,6 @@ class BeneficiaryCreate extends Component {
                                                     {
                                                         label: 'Female',
                                                         value: 'female'
-                                                    },
-                                                    {
-                                                        label: 'Prefer not to say',
-                                                        value: 'other'
                                                     },
                                                 ]
                                             }
@@ -646,7 +642,7 @@ class BeneficiaryCreate extends Component {
                                             error={this.state.errors['village']}
                                         />
                                         <TextInput
-                                            class={'col-sm-6 required'}
+                                            class={'col-sm-6 col-12 required'}
                                             label={'Phone Number'}
                                             required={true}
                                             field={'phone_number'}
@@ -656,7 +652,7 @@ class BeneficiaryCreate extends Component {
                                             error={this.state.errors['phone_number']}
                                         />
                                         <CustomInput
-                                            className={'col-sm-6 required'}
+                                            className={'col-sm-6 col-12 required'}
                                             label={'Person With Disability'}
                                             type={'checkbox'}
                                             id={'pwd'}

@@ -32,7 +32,7 @@ class BeneficiaryRequest extends FormRequest
             'NIN' => 'required|min:1|max:14',
             'gender' => [
                 'required',
-                Rule::in(['other', 'male', 'female'])
+                Rule::in(['male', 'female'])
             ],
             'is_pwd' => 'present',
             'type_of_disability' => 'required_if:is_pwd,true',
