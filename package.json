@@ -60,7 +60,7 @@
         "react-router-dom": "^5.2.0",
         "react-select": "^4.3.0",
         "react-time-picker": "^4.0.1",
-        "react-to-print": "^2.9.0",
+        "react-to-print": "^2.13.0",
         "reactstrap": "^8.9.0",
         "uuid": "^8.3.2"
     }
