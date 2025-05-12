@@ -57,11 +57,11 @@
         "react-flash-message": "^1.0.2",
         "react-notification-alert": "0.0.13",
         "react-perfect-scrollbar": "^1.5.8",
-        "react-router-dom": "^5.2.0",
+        "react-router-dom": "^6.4.0",
         "react-select": "^4.3.0",
         "react-time-picker": "^4.0.1",
         "react-to-print": "^2.9.0",
-        "reactstrap": "^8.9.0",
+        "reactstrap": "^9.0.0",
         "uuid": "^8.3.2"
     }
 }
